@@ -23,7 +23,7 @@ public class UserV1Controller implements UserV1ApiSpec {
 
     @GetMapping("/{id}")
     public ApiResponse<UserV1Dto.UserResponse> getUser(@PathVariable Long id) {
-        UserInfo userInfo = userFacade.getUserById(id);
+        UserInfo userInfo = userFacade.getUser(id);
         UserV1Dto.UserResponse response = UserV1Dto.UserResponse.from(userInfo);
         return ApiResponse.success(response);
     }

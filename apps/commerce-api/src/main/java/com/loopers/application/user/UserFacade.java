@@ -15,7 +15,7 @@ public class UserFacade {
         return UserInfo.from(savedUser);
     }
 
-    public UserInfo getUserById(Long id) {
+    public UserInfo getUser(Long id) {
         User user = userService.findById(id);
         return UserInfo.from(user);
     }
