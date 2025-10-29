@@ -6,4 +6,6 @@ public interface UserService {
     User register(User user);
 
     Optional<User> findByLoginId(String loginId);
+
+    User findById(Long id);
 }

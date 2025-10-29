@@ -66,7 +66,7 @@ class UserServiceIntegrationTest {
             // assert
             verify(userRepository, times(1)).save(any(User.class));
 
-            User persistedUser = userRepository.find(savedUser.getId()).orElseThrow();
+            User persistedUser = userRepository.findById(savedUser.getId()).orElseThrow();
             assertEquals(user.getLoginId(), persistedUser.getLoginId());
 
         }

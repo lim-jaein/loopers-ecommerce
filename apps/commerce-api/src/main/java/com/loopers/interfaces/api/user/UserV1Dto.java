@@ -9,15 +9,17 @@ public class UserV1Dto {
             return User.create(loginId, password, email, birthDate, gender);
         }
     }
-    public record SignupResponse(Long id, String loginId, String email, String birthDate, String gender) {
-        public static SignupResponse from(UserInfo info) {
-            return new SignupResponse(
-                info.id(),
-                info.loginId(),
-                info.email(),
-                info.birthDate(),
-                info.gender()
+
+    public record UserResponse(Long id, String loginId, String email, String birthDate, String gender) {
+        public static UserResponse from(UserInfo info) {
+            return new UserResponse(
+                    info.id(),
+                    info.loginId(),
+                    info.email(),
+                    info.birthDate(),
+                    info.gender()
             );
         }
     }
+
 }

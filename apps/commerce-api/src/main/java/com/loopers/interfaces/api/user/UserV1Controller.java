@@ -15,9 +15,16 @@ public class UserV1Controller implements UserV1ApiSpec {
 
     @Override
     @PostMapping("/signup")
-    public ApiResponse<UserV1Dto.SignupResponse> signup(@RequestBody UserV1Dto.SignupRequest request) {
+    public ApiResponse<UserV1Dto.UserResponse> signup(@RequestBody UserV1Dto.SignupRequest request) {
         UserInfo userInfo = userFacade.signup(request.toEntity());
-        UserV1Dto.SignupResponse response = UserV1Dto.SignupResponse.from(userInfo);
+        UserV1Dto.UserResponse response = UserV1Dto.UserResponse.from(userInfo);
+        return ApiResponse.success(response);
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<UserV1Dto.UserResponse> getUser(@PathVariable Long id) {
+        UserInfo userInfo = userFacade.getUserById(id);
+        UserV1Dto.UserResponse response = UserV1Dto.UserResponse.from(userInfo);
         return ApiResponse.success(response);
     }
 }
