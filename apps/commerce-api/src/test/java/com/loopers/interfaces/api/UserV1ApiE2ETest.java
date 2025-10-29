@@ -1,5 +1,6 @@
 package com.loopers.interfaces.api;
 
+import com.loopers.domain.user.User;
 import com.loopers.infrastructure.user.UserJpaRepository;
 import com.loopers.interfaces.api.example.ExampleV1Dto;
 import com.loopers.interfaces.api.user.UserV1Dto;
@@ -16,8 +17,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.function.Function;
 
 import static com.loopers.domain.user.UserFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,7 +53,7 @@ class UserV1ApiE2ETest {
     class Signup {
         @DisplayName("회원가입이 성공할 경우, 생성된 유저 정보를 응답으로 반환한다.")
         @Test
-        void returnsUserInfo_whenSignupSucceed() {
+        void returnsUserInfo_whenSignupSucceeds() {
             // arrange
             UserV1Dto.SignupRequest requestDto = new UserV1Dto.SignupRequest(
                     validLoginId(),
@@ -91,8 +90,8 @@ class UserV1ApiE2ETest {
             );
 
             // act
-            ParameterizedTypeReference<ApiResponse<ExampleV1Dto.ExampleResponse>> responseType = new ParameterizedTypeReference<>() {};
-            ResponseEntity<ApiResponse<ExampleV1Dto.ExampleResponse>> response =
+            ParameterizedTypeReference<ApiResponse<UserV1Dto.SignupResponse>> responseType = new ParameterizedTypeReference<>() {};
+            ResponseEntity<ApiResponse<UserV1Dto.SignupResponse>> response =
                 testRestTemplate.exchange(ENDPOINT_POST, HttpMethod.POST, new HttpEntity<>(requestDto), responseType);
 
             // assert
