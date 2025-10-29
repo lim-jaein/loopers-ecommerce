@@ -23,20 +23,24 @@ public class User {
     @Column(nullable = false)
     private String birthDate;    // yyyy-MM-dd
 
+    private String gender;
+
     protected User() {}
 
-    public User(String loginId, String password, String email, String birthDate) {
+    private User(String loginId, String password, String email, String birthDate, String gender) {
         this.loginId = loginId;
         this.password = password;
         this.email = email;
         this.birthDate = birthDate;
+        this.gender = gender;
     }
 
-    public static User create(String loginId, String password, String email, String birthDate) {
+    public static User create(String loginId, String password, String email, String birthDate, String gender) {
         validLoginID(loginId);
         validEmail(email);
         validBirthDate(birthDate);
-        return new User(loginId, password, email, birthDate);
+        validGender(gender);
+        return new User(loginId, password, email, birthDate, gender);
     }
 
     private static void validBirthDate(String birthDate) {
@@ -54,6 +58,12 @@ public class User {
     private static void validLoginID(String loginId) {
         if (!loginId.matches("^[a-zA-Z0-9]{1,10}$")) {
             throw new CoreException(ErrorType.BAD_REQUEST, "ID 형식이 올바르지 않습니다.");
+        }
+    }
+
+    private static void validGender(String gender) {
+        if (gender == null) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "성별 데이터가 존재하지 않습니다.");
         }
     }
 }
