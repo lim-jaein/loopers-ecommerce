@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class UserServiceIntegrationTest {
@@ -68,6 +69,48 @@ class UserServiceIntegrationTest {
             User persistedUser = userRepository.find(savedUser.getId()).orElseThrow();
             assertEquals(user.getLoginId(), persistedUser.getLoginId());
 
+        }
+    }
+
+
+    @DisplayName("내 정보 조회 시,")
+    @Nested
+    class GetMe {
+        @DisplayName("해당 ID의 회원이 존재할 경우, 회원 정보가 반환된다.")
+        @Test
+        void returnUser_whenLoginIdExists() {
+            // arrange
+            User user = User.create("limjaein", validPassword(), validEmail(), validBirthDate(), validGender());
+            userService.register(user);
+
+            // act
+            User foundUser = userService.findByLoginId("limjaein").orElse(null);
+
+            // assert
+
+            verify(userRepository, times(1)).findByLoginId("limjaein");
+
+            assertThat(foundUser).isNotNull();
+            assertAll(
+                    () -> assertThat(foundUser.getLoginId()).isEqualTo(user.getLoginId()),
+                    () -> assertThat(foundUser.getEmail()).isEqualTo(user.getEmail()),
+                    () -> assertThat(foundUser.getBirthDate()).isEqualTo(user.getBirthDate()),
+                    () -> assertThat(foundUser.getGender()).isEqualTo(user.getGender())
+            );
+        }
+
+        @DisplayName("해당 ID의 회원이 존재하지 않을 경우, null이 반환된다.")
+        @Test
+        void returnNull_whenLoginIdNotExists() {
+            // arrange
+
+            // act
+            User foundUser = userService.findByLoginId("limjaein").orElse(null);
+
+            // assert
+
+            verify(userRepository, times(1)).findByLoginId("limjaein");
+            assertThat(foundUser).isNull();
         }
     }
 }
