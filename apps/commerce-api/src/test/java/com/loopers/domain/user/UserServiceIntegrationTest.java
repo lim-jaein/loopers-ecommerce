@@ -34,13 +34,13 @@ class UserServiceIntegrationTest {
 
     @DisplayName("회원가입 시,")
     @Nested
-    class Join {
+    class Signup {
         @DisplayName("이미 가입된 ID로 시도 시 중복 예외가 발생한다.")
         @Test
         void register_failsWhenLoginIdExists() {
             // arrange
             doReturn(true).when(userRepository).existsByLoginId("limjaein");
-            User duplicateUser = User.create("limjaein", validPassword(), validEmail(), validBirthDate());
+            User duplicateUser = User.create("limjaein", validPassword(), validEmail(), validBirthDate(), validGender());
 
             // act + assert
             assertThatThrownBy(() -> userService.register(duplicateUser))

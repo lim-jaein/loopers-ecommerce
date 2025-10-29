@@ -17,7 +17,7 @@ public class UserTest {
     @Test
     void createUser() {
         // act
-        User result = User.create(validLoginId(), validPassword(), validEmail(), validBirthDate());
+        User result = createValidUser();
 
         // assert
         assertThat(result).isNotNull();
@@ -25,6 +25,7 @@ public class UserTest {
         assertThat(result.getPassword()).isEqualTo(validPassword());
         assertThat(result.getEmail()).isEqualTo(validEmail());
         assertThat(result.getBirthDate()).isEqualTo(validBirthDate());
+        assertThat(result.getGender()).isEqualTo(validGender());
 
     }
 
@@ -36,7 +37,7 @@ public class UserTest {
 
         // act
         CoreException result = assertThrows(CoreException.class, () ->
-            User.create(invalidId, validPassword(), validEmail(), validBirthDate()));
+            User.create(invalidId, validPassword(), validEmail(), validBirthDate(), validGender()));
 
         // assert
         assertThat(result.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
@@ -51,7 +52,7 @@ public class UserTest {
 
         // act
         CoreException result = assertThrows(CoreException.class, () ->
-                User.create(validLoginId(), validPassword(), invalidEmail, validBirthDate()));
+                User.create(validLoginId(), validPassword(), invalidEmail, validBirthDate(), validGender()));
 
         // assert
         assertThat(result.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
@@ -65,7 +66,7 @@ public class UserTest {
 
         // act
         CoreException result = assertThrows(CoreException.class, () ->
-                User.create(validLoginId(), validPassword(), validEmail(), invalidBirthDate));
+                User.create(validLoginId(), validPassword(), validEmail(), invalidBirthDate, validGender()));
 
         // assert
         assertThat(result.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
