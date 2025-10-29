@@ -9,4 +9,12 @@ public final class UserFixtures {
     public static String validEmail() { return "limjaein@google.com"; }
     public static String validBirthDate() { return "1996-11-27"; }
 
+    public static User createValidUser() {
+        return User.create(
+                validLoginId(),
+                validPassword(),
+                validEmail(),
+                validBirthDate()
+        );
+    }
 }
