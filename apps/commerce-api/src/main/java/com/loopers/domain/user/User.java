@@ -11,7 +11,7 @@ import lombok.Getter;
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String loginId;
@@ -22,6 +22,8 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String birthDate;    // yyyy-MM-dd
+
+    protected User() {}
 
     public User(String loginId, String password, String email, String birthDate) {
         this.loginId = loginId;
