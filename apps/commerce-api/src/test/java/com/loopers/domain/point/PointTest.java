@@ -1,0 +1,30 @@
+package com.loopers.domain.point;
+
+import com.loopers.support.error.CoreException;
+import com.loopers.support.error.ErrorType;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class PointTest {
+    @DisplayName("포인트를 충전할 때, ")
+    @Nested
+    class Charge {
+        @DisplayName("0 이하의 정수로 포인트를 충전 시 실패한다.")
+        @Test
+        void chargePoint_failsWhenAmountIsZeroOrNegative() {
+            // arrange
+            Point point = Point.create(1L);
+
+            // act + assert
+            CoreException result = assertThrows(CoreException.class, () ->
+                    point.increase(0)
+            );
+
+            assertThat(result.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
+        }
+    }
+}
