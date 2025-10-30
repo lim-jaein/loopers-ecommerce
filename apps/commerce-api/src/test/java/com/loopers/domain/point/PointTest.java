@@ -27,5 +27,19 @@ class PointTest {
 
             assertThat(result.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);
         }
+
+        @DisplayName("충전금액이 1 이상일 때, 포인트가 정상 충전된다.")
+        @Test
+        void chargePoint() {
+            // arrange
+            Point point = Point.create(createValidUser());
+            int chargeAmount = 1000;
+
+            // act
+            point.increase(chargeAmount);
+
+            // assert
+            assertThat(point.getBalance()).isEqualTo(chargeAmount);
+        }
     }
 }
