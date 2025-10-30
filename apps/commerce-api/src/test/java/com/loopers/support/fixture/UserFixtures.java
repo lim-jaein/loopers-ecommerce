@@ -1,4 +1,6 @@
-package com.loopers.domain.user;
+package com.loopers.support.fixture;
+
+import com.loopers.domain.user.User;
 
 public final class UserFixtures {
 

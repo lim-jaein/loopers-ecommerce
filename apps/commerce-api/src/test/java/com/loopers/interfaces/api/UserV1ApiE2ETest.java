@@ -19,7 +19,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.function.Function;
 
-import static com.loopers.domain.user.UserFixtures.*;
+import static com.loopers.support.fixture.UserFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
