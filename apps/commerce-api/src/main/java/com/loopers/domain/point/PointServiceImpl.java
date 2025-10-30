@@ -19,12 +19,17 @@ public class PointServiceImpl implements PointService {
         return pointRepository.findByUserId(userId).map(Point::getBalance);
     }
 
-    @Transactional
-    public void chargePoint(Long userId, int amount) {
-        Point point = pointRepository.findByUserId(userId).orElseThrow(
+    @Override
+    public Point getPointOrThrow(Long userId) {
+        return pointRepository.findByUserId(userId).orElseThrow(
                 () -> new CoreException(ErrorType.NOT_FOUND, "포인트 정보가 존재하지 않는 유저입니다.")
         );
+    }
 
-        point.increase(amount);
+    @Transactional
+    public int chargePoint(Long userId, int amount) {
+        Point point = getPointOrThrow(userId);
+
+        return point.increase(amount);
     }
 }
