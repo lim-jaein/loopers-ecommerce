@@ -21,7 +21,7 @@ public class PointV1Controller implements PointV1ApiSpec {
         return ApiResponse.success(response);
     }
 
-    @GetMapping("/charge")
+    @PostMapping("/charge")
     @Override
     public ApiResponse<PointV1Dto.PointResponse> chargePoint(@RequestBody PointV1Dto.PointChargeRequest request) {
 
