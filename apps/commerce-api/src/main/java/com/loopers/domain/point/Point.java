@@ -34,11 +34,12 @@ public class Point extends BaseEntity {
         return new Point(user);
     }
 
-    public void increase(int amount) {
+    public int increase(int amount) {
         if (amount <= 0) {
             throw new CoreException(ErrorType.BAD_REQUEST, "충전 금액은 0보다 커야 합니다.");
         }
 
         this.balance += amount;
+        return this.balance;
     }
 }
