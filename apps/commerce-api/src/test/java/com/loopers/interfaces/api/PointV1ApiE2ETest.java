@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PointV1ApiE2ETest {
 
     private static final String ENDPOINT_GET = "/api/v1/points";
+    private static final String ENDPOINT_POST = "/api/v1/points/charge";
 
     private final TestRestTemplate testRestTemplate;
     private final PointJpaRepository pointJpaRepository;
@@ -90,6 +91,58 @@ class PointV1ApiE2ETest {
             assertAll(
                 () -> assertTrue(response.getStatusCode().is4xxClientError()),
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST)
+            );
+        }
+    }
+
+
+    @DisplayName("POST /api/v1/points/charge")
+    @Nested
+    class Charge {
+        @DisplayName("존재하는 유저가 1000원을 충전할 경우, 충전된 보유 총량을 응답으로 반환한다.")
+        @Test
+        void returnsTotalPoint_whenUserChargesPoint() {
+            // arrange
+            User user = userJpaRepository.save(createValidUser());
+            Point point = pointJpaRepository.save(Point.create(user));
+
+            PointV1Dto.PointChargeRequest requestDto = new PointV1Dto.PointChargeRequest(
+                    user.getId(),
+                    1000
+            );
+
+            // act
+            ParameterizedTypeReference<ApiResponse<PointV1Dto.PointResponse>> responseType = new ParameterizedTypeReference<>() {};
+            ResponseEntity<ApiResponse<PointV1Dto.PointResponse>> response =
+                    testRestTemplate.exchange(ENDPOINT_POST, HttpMethod.POST, new HttpEntity<>(requestDto), responseType);
+
+            // assert
+            assertThat(response.getBody()).isNotNull();
+            assertAll(
+                    () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
+                    () -> assertThat(response.getBody().data().balance()).isEqualTo(1000)
+            );
+        }
+
+        @DisplayName("존재하지 않는 유저로 요청할 경우, 404 Not Found 응답을 반환한다.")
+        @Test
+        void throwsNotFound_failsWhenUserNotExists() {
+            // arrange
+
+            PointV1Dto.PointChargeRequest requestDto = new PointV1Dto.PointChargeRequest(
+                    -1L,
+                    1000
+            );
+
+            // act
+            ParameterizedTypeReference<ApiResponse<ExampleV1Dto.ExampleResponse>> responseType = new ParameterizedTypeReference<>() {};
+            ResponseEntity<ApiResponse<ExampleV1Dto.ExampleResponse>> response =
+                    testRestTemplate.exchange(ENDPOINT_POST, HttpMethod.POST, new HttpEntity<>(requestDto), responseType);
+
+            // assert
+            assertAll(
+                    () -> assertTrue(response.getStatusCode().is4xxClientError()),
+                    () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND)
             );
         }
     }
