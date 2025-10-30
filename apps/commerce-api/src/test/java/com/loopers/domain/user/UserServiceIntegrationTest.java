@@ -41,8 +41,9 @@ class UserServiceIntegrationTest {
         @Test
         void register_failsWhenLoginIdExists() {
             // arrange
-            doReturn(true).when(userJpaRepository).existsByLoginId("limjaein");
-            User duplicateUser = User.create("limjaein", validPassword(), validEmail(), validBirthDate(), validGender());
+            userJpaRepository.save(createValidUser());
+
+            User duplicateUser = createValidUser();
 
             // act + assert
             assertThatThrownBy(() -> userService.register(duplicateUser))
@@ -52,7 +53,7 @@ class UserServiceIntegrationTest {
                     .isEqualTo(ErrorType.CONFLICT);
 
             verify(userJpaRepository, times(1)).existsByLoginId("limjaein");
-            verify(userJpaRepository, never()).save(argThat(u -> "limjaein".equals(u.getLoginId())));
+            verify(userJpaRepository, times(1)).save(any());
         }
 
         @DisplayName("User 저장이 수행된다 (Spy 검증)")
