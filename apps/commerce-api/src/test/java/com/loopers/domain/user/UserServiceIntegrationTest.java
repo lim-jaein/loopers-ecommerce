@@ -4,19 +4,22 @@ import com.loopers.infrastructure.user.UserJpaRepository;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import com.loopers.utils.DatabaseCleanUp;
-import org.junit.jupiter.api.*;
-
-
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
-import static com.loopers.support.fixture.UserFixtures.*;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.loopers.support.fixture.UserFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class UserServiceIntegrationTest {
@@ -86,18 +89,18 @@ class UserServiceIntegrationTest {
             userService.register(user);
 
             // act
-            User foundUser = userService.findByLoginId("limjaein").orElse(null);
+            Optional<User> foundUser = userService.findByLoginId("limjaein");
 
             // assert
 
             verify(userJpaRepository, times(1)).findByLoginId("limjaein");
 
-            assertThat(foundUser).isNotNull();
+            assertThat(foundUser).isPresent();
             assertAll(
-                    () -> assertThat(foundUser.getLoginId()).isEqualTo(user.getLoginId()),
-                    () -> assertThat(foundUser.getEmail()).isEqualTo(user.getEmail()),
-                    () -> assertThat(foundUser.getBirthDate()).isEqualTo(user.getBirthDate()),
-                    () -> assertThat(foundUser.getGender()).isEqualTo(user.getGender())
+                    () -> assertThat(foundUser.get().getLoginId()).isEqualTo(user.getLoginId()),
+                    () -> assertThat(foundUser.get().getEmail()).isEqualTo(user.getEmail()),
+                    () -> assertThat(foundUser.get().getBirthDate()).isEqualTo(user.getBirthDate()),
+                    () -> assertThat(foundUser.get().getGender()).isEqualTo(user.getGender())
             );
         }
 
@@ -107,12 +110,12 @@ class UserServiceIntegrationTest {
             // arrange
 
             // act
-            User foundUser = userService.findByLoginId("limjaein").orElse(null);
+            Optional<User> foundUser = userService.findByLoginId("limjaein");
 
             // assert
 
             verify(userJpaRepository, times(1)).findByLoginId("limjaein");
-            assertThat(foundUser).isNull();
+            assertThat(foundUser).isEmpty();
         }
     }
 }
