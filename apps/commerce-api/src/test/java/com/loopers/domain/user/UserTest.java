@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import static com.loopers.domain.user.UserFixtures.*;
+import static com.loopers.support.fixture.UserFixtures.*;
 
 @DisplayName("User 생성 시")
 public class UserTest {

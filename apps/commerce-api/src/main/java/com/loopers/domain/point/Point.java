@@ -1,5 +1,7 @@
 package com.loopers.domain.point;
 
+import com.loopers.domain.BaseEntity;
+import com.loopers.domain.user.User;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import jakarta.persistence.*;
@@ -8,13 +10,14 @@ import lombok.Getter;
 @Getter
 @Entity
 @Table(name = "points")
-public class Point {
+public class Point extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private Long userId;
+    @OneToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
 
     @Column(nullable = false)
     private int balance;
@@ -22,13 +25,13 @@ public class Point {
     protected Point() {
     }
 
-    private Point(Long userId) {
-        this.userId = userId;
+    private Point(User user) {
+        this.user = user;
         this.balance = 0;
     }
 
-    public static Point create(Long userId) {
-        return new Point(userId);
+    public static Point create(User user) {
+        return new Point(user);
     }
 
     public void increase(int amount) {

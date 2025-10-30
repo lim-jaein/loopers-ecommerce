@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static com.loopers.support.fixture.UserFixtures.createValidUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -17,7 +18,7 @@ class PointTest {
         @Test
         void chargePoint_failsWhenAmountIsZeroOrNegative() {
             // arrange
-            Point point = Point.create(1L);
+            Point point = Point.create(createValidUser());
 
             // act + assert
             CoreException result = assertThrows(CoreException.class, () ->
