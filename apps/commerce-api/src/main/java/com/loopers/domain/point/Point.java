@@ -40,6 +40,5 @@ public class Point extends BaseEntity {
         }
 
         this.balance += amount;
-        return;
     }
 }
