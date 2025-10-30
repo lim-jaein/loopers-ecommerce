@@ -4,11 +4,12 @@ import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.loopers.support.fixture.UserFixtures.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("User 생성 시")
 public class UserTest {
@@ -30,10 +31,10 @@ public class UserTest {
     }
 
     @DisplayName("ID 가 영문 및 숫자 10자 이내 형식에 맞지 않으면 실패한다.")
-    @Test
-    void createUser_failsWhenIdHasInvalidFormat() {
+    @ParameterizedTest
+    @ValueSource(strings = {"qwer1234567890", "아이디", "!@#$%^&*()!@#$%"})
+    void createUser_failsWhenIdHasInvalidFormat(String invalidId) {
         // arrange
-        String invalidId = "아이디";
 
         // act
         CoreException result = assertThrows(CoreException.class, () ->
@@ -45,10 +46,10 @@ public class UserTest {
 
 
     @DisplayName("이메일이 xx@yy.zz 형식에 맞지 않으면 실패한다.")
-    @Test
-    void createUser_failsWhenEmailHasInvalidFormat() {
+    @ParameterizedTest
+    @ValueSource(strings = {"email", "email@navercom", "email@naver.", "@naver.com"})
+    void createUser_failsWhenEmailHasInvalidFormat(String invalidEmail) {
         // arrange
-        String invalidEmail = "1234";
 
         // act
         CoreException result = assertThrows(CoreException.class, () ->
@@ -59,10 +60,10 @@ public class UserTest {
     }
 
     @DisplayName("생년월일이 yyyy-MM-dd 형식에 맞지 않으면 실패한다.")
-    @Test
-    void createUser_failsWhenBirthDateHasInvalidFormat() {
+    @ParameterizedTest
+    @ValueSource(strings = {"19961127", "1996-1127", "199611-27", "19-96-11-27"})
+    void createUser_failsWhenBirthDateHasInvalidFormat(String invalidBirthDate) {
         // arrange
-        String invalidBirthDate = "19961127";
 
         // act
         CoreException result = assertThrows(CoreException.class, () ->
