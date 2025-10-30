@@ -1,5 +1,6 @@
 package com.loopers.domain.user;
 
+import com.loopers.infrastructure.user.UserJpaRepository;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import com.loopers.utils.DatabaseCleanUp;
@@ -23,7 +24,7 @@ class UserServiceIntegrationTest {
     private UserService userService;
 
     @MockitoSpyBean
-    private UserRepository userRepository;
+    private UserJpaRepository userJpaRepository;
 
     @Autowired
     private DatabaseCleanUp databaseCleanUp;
@@ -40,7 +41,7 @@ class UserServiceIntegrationTest {
         @Test
         void register_failsWhenLoginIdExists() {
             // arrange
-            doReturn(true).when(userRepository).existsByLoginId("limjaein");
+            doReturn(true).when(userJpaRepository).existsByLoginId("limjaein");
             User duplicateUser = User.create("limjaein", validPassword(), validEmail(), validBirthDate(), validGender());
 
             // act + assert
@@ -50,8 +51,8 @@ class UserServiceIntegrationTest {
                     .extracting("errorType")
                     .isEqualTo(ErrorType.CONFLICT);
 
-            verify(userRepository, times(1)).existsByLoginId("limjaein");
-            verify(userRepository, never()).save(argThat(u -> "limjaein".equals(u.getLoginId())));
+            verify(userJpaRepository, times(1)).existsByLoginId("limjaein");
+            verify(userJpaRepository, never()).save(argThat(u -> "limjaein".equals(u.getLoginId())));
         }
 
         @DisplayName("User 저장이 수행된다 (Spy 검증)")
@@ -64,9 +65,9 @@ class UserServiceIntegrationTest {
             User savedUser = userService.register(user);
 
             // assert
-            verify(userRepository, times(1)).save(any(User.class));
+            verify(userJpaRepository, times(1)).save(any(User.class));
 
-            User persistedUser = userRepository.findById(savedUser.getId()).orElseThrow();
+            User persistedUser = userJpaRepository.findById(savedUser.getId()).orElseThrow();
             assertEquals(user.getLoginId(), persistedUser.getLoginId());
 
         }
@@ -88,7 +89,7 @@ class UserServiceIntegrationTest {
 
             // assert
 
-            verify(userRepository, times(1)).findByLoginId("limjaein");
+            verify(userJpaRepository, times(1)).findByLoginId("limjaein");
 
             assertThat(foundUser).isNotNull();
             assertAll(
@@ -109,7 +110,7 @@ class UserServiceIntegrationTest {
 
             // assert
 
-            verify(userRepository, times(1)).findByLoginId("limjaein");
+            verify(userJpaRepository, times(1)).findByLoginId("limjaein");
             assertThat(foundUser).isNull();
         }
     }
