@@ -8,8 +8,6 @@ sequenceDiagram
     participant ProductService
     participant ProductRepository
     participant ProductLikeRepository
-    participant ProductLikeCountService
-    participant ProductLikeCountRepository
 
     User->>ProductLikeController: POST /api/v1/like/products/{productId}
     ProductLikeController->>ProductLikeService: addLike(userId, productId)
@@ -21,8 +19,6 @@ sequenceDiagram
         
         alt 사용자가 해당 상품을 처음 좋아요 한 경우
             ProductLikeService->>ProductLikeRepository: save(userId, productId)
-            ProductLikeService->>ProductLikeCountService: increaseLikeCount(productId)
-            ProductLikeCountService->>ProductLikeCountRepository: increaseLikeCount(productId)
         end
     end
     
