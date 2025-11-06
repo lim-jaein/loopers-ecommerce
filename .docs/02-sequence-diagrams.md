@@ -32,17 +32,15 @@ sequenceDiagram
     participant User
     participant OrderController
     participant OrderService
-    participant OrderItemService
     participant ProductService
     participant PointService
     participant OrderRepository
+    participant OrderItemService
     participant OrderItemRepository
 
     User->>OrderController: POST /api/v1/orders
     OrderController->>OrderService: createOrder(order)
-
-    OrderService->>OrderItemService: validateOrderItems(orderItems)
-    OrderItemService->>ProductService: validateOrderable(orderItems)
+    OrderService->>ProductService: validateOrderable(orderItems)
 
     alt 각 상품이 존재하고, 주문 수량이 재고 이하인 경우
         OrderService->>PointService: validatePayable(userId, totalPrice)
@@ -51,6 +49,8 @@ sequenceDiagram
             OrderService->>OrderRepository: save(order)
             OrderService->>OrderItemService: createOrderItems(order, orderItems)
             OrderItemService->>OrderItemRepository: saveAll(orderItems)
+            OrderService->>ProductService: decreaseStock(orderItems)
+            OrderService->>PointService: usePoint(userId, totalPrice)
         end
     end
 ```
