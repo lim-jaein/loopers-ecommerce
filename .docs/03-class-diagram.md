@@ -1,63 +1,54 @@
 ```mermaid
-erDiagram
-    brands {
-        bigint id PK
-        varchar name
+classDiagram
+    class Brand {
+        Long id
+        String name
     }
-    products {
-        bigint id PK
-        varchar name
-        bigint brand_id FK
-        int price
-        int stock
+    class Product {
+        Long id
+        Brand brand
+        String name
+        Price price
+        Stock stock
     }
-    product_likes {
-        bigint user_id PK, FK
-        bigint product_id PK, FK
-        timestamp deleted_at
+    class ProductLike {
+        Long id
+        User user
+        Product product
+        LocalDateTime deletedAt
     }
-    product_like_count {
-        bigint product_id PK, FK
-        int total_count
+    class User {
+        Long id
+        String loginId
+        String password
     }
-    users {
-        bigint id PK
-        varchar login_id
-        varchar password
-        varchar email
-        varchar birth_date
-        varchar gender
-    }
-    points {
-        bigint id PK
-        bigint user_id FK 
+    class Point {
+        Long id
+        User user
         int balance
     }
-    orders {
-        bigint id PK
-        bigint user_id FK
-        orderStatus status
+    class Order {
+        Long id
+        User user
     }
-    order_items {
-        bigint id PK
-        bigint order_id FK
-        bigint product_id FK
+    class OrderItem {
+        Long id
+        Order order
+        Product product
         int quantity
-        int item_price
+        Price itemPrice
     }
-    class orderStatus {
+    
+    class OrderStatus {
         <<enumeration>>
         CREATED
         PAID
         CANCELED
     }
 
-brands ||--o{ products : ""
-products ||--o{ product_likes : ""
-users ||--o{ product_likes : ""
-product_likes ||--|| product_like_count : ""
-points ||--|| users : ""
-users ||--o{ orders : ""
-orders ||--o{ order_items : ""
-order_items ||--|| products : ""
+    Product --> Brand
+    ProductLike --> Product
+    Point --> User
+    OrderItem --> Order
+    OrderItem --> Product
 ```
