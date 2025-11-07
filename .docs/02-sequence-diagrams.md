@@ -47,10 +47,16 @@ sequenceDiagram
 
         alt 주문 총 금액이 사용자의 보유 포인트 이하인 경우
             OrderService->>OrderRepository: save(order)
+            
             OrderService->>OrderItemService: createOrderItems(order, orderItems)
             OrderItemService->>OrderItemRepository: saveAll(orderItems)
+            
             OrderService->>ProductService: decreaseStock(orderItems)
             OrderService->>PointService: usePoint(userId, totalPrice)
+            
+            OrderService->>OrderRepository: changeOrderStatus(orderId, PAID)
+        else
+            OrderService->>OrderRepository: changeOrderStatus(orderId, CANCELED)
         end
     end
 ```
