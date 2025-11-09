@@ -8,10 +8,11 @@ classDiagram
         Long id
         Brand brand
         String name
-        Price price
+        Money price
         Stock stock
+        int likeCount
     }
-    class ProductLike {
+    class Like {
         Long id
         User user
         Product product
@@ -25,18 +26,19 @@ classDiagram
     class Point {
         Long id
         User user
-        int balance
+        Money balance
     }
     class Order {
         Long id
         User user
+        OrderStatus status
     }
     class OrderItem {
         Long id
         Order order
         Product product
         int quantity
-        Price itemPrice
+        Money totalPrice
     }
     
     class OrderStatus {
