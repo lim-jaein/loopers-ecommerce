@@ -1,5 +1,6 @@
 ```mermaid
 erDiagram
+%% created_at, updated_at 등 공통 컬럼은 모든 테이블에 포함되어 있습니다
 brands {
     bigint id PK
     varchar name
@@ -14,8 +15,8 @@ products {
 }
 likes {
     bigint id PK
-    bigint user_id PK, FK
-    bigint product_id PK, FK
+    bigint user_id FK
+    bigint product_id FK
     timestamp deleted_at
 }
 users {
@@ -45,11 +46,11 @@ order_items {
 }
 
 brands ||--o{ products : ""
-users ||--o{ product_likes : ""
+users ||--o{ likes : ""
 users ||--|| points : ""
 users ||--o{ orders : ""
 orders ||--o{ order_items : ""
-products ||--o{ product_likes : ""
-products ||--|| product_like_count : ""
-order_items ||--|| products : ""
+products ||--o{ likes : ""
+products ||--o{ order_items : ""
+
 ```
