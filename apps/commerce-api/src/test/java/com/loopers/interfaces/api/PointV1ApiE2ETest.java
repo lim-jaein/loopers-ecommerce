@@ -4,7 +4,6 @@ import com.loopers.domain.point.Point;
 import com.loopers.domain.user.User;
 import com.loopers.infrastructure.point.PointJpaRepository;
 import com.loopers.infrastructure.user.UserJpaRepository;
-import com.loopers.interfaces.api.example.ExampleV1Dto;
 import com.loopers.interfaces.api.point.PointV1Dto;
 import com.loopers.utils.DatabaseCleanUp;
 import org.junit.jupiter.api.AfterEach;
@@ -83,8 +82,8 @@ class PointV1ApiE2ETest {
             // arrange
 
             // act
-            ParameterizedTypeReference<ApiResponse<ExampleV1Dto.ExampleResponse>> responseType = new ParameterizedTypeReference<>() {};
-            ResponseEntity<ApiResponse<ExampleV1Dto.ExampleResponse>> response =
+            ParameterizedTypeReference<ApiResponse<PointV1Dto.PointResponse>> responseType = new ParameterizedTypeReference<>() {};
+            ResponseEntity<ApiResponse<PointV1Dto.PointResponse>> response =
                 testRestTemplate.exchange(ENDPOINT_GET, HttpMethod.GET, new HttpEntity<>(null), responseType);
 
             // assert
@@ -106,15 +105,17 @@ class PointV1ApiE2ETest {
             User user = userJpaRepository.save(createValidUser());
             Point point = pointJpaRepository.save(Point.create(user));
 
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-USER-ID", String.valueOf(user.getId()));
+
             PointV1Dto.PointChargeRequest requestDto = new PointV1Dto.PointChargeRequest(
-                    user.getId(),
                     1000
             );
 
             // act
             ParameterizedTypeReference<ApiResponse<PointV1Dto.PointResponse>> responseType = new ParameterizedTypeReference<>() {};
             ResponseEntity<ApiResponse<PointV1Dto.PointResponse>> response =
-                    testRestTemplate.exchange(ENDPOINT_POST, HttpMethod.POST, new HttpEntity<>(requestDto), responseType);
+                    testRestTemplate.exchange(ENDPOINT_POST, HttpMethod.POST, new HttpEntity<>(requestDto, headers), responseType);
 
             // assert
             assertThat(response.getBody()).isNotNull();
@@ -129,15 +130,17 @@ class PointV1ApiE2ETest {
         void throwsNotFound_failsWhenUserNotExists() {
             // arrange
 
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-USER-ID", String.valueOf(-1L));
+
             PointV1Dto.PointChargeRequest requestDto = new PointV1Dto.PointChargeRequest(
-                    -1L,
                     1000
             );
 
             // act
-            ParameterizedTypeReference<ApiResponse<ExampleV1Dto.ExampleResponse>> responseType = new ParameterizedTypeReference<>() {};
-            ResponseEntity<ApiResponse<ExampleV1Dto.ExampleResponse>> response =
-                    testRestTemplate.exchange(ENDPOINT_POST, HttpMethod.POST, new HttpEntity<>(requestDto), responseType);
+            ParameterizedTypeReference<ApiResponse<PointV1Dto.PointResponse>> responseType = new ParameterizedTypeReference<>() {};
+            ResponseEntity<ApiResponse<PointV1Dto.PointResponse>> response =
+                    testRestTemplate.exchange(ENDPOINT_POST, HttpMethod.POST, new HttpEntity<>(requestDto, headers), responseType);
 
             // assert
             assertAll(

@@ -5,6 +5,8 @@ import com.loopers.support.error.ErrorType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.loopers.support.fixture.UserFixtures.createValidUser;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,14 +17,15 @@ class PointTest {
     @Nested
     class Charge {
         @DisplayName("0 이하의 정수로 포인트를 충전 시 실패한다.")
-        @Test
-        void chargePoint_failsWhenAmountIsZeroOrNegative() {
+        @ParameterizedTest
+        @ValueSource(ints = {0, -1000})
+        void chargePoint_failsWhenAmountIsZeroOrNegative(int invalidAmount) {
             // arrange
             Point point = Point.create(createValidUser());
 
             // act + assert
             CoreException result = assertThrows(CoreException.class, () ->
-                    point.increase(0)
+                    point.increase(invalidAmount)
             );
 
             assertThat(result.getErrorType()).isEqualTo(ErrorType.BAD_REQUEST);

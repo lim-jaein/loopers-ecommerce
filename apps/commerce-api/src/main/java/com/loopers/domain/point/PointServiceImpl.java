@@ -2,7 +2,6 @@ package com.loopers.domain.point;
 
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +25,7 @@ public class PointServiceImpl implements PointService {
         );
     }
 
-    @Transactional
+    @Override
     public int chargePoint(Long userId, int amount) {
         Point point = getPointOrThrow(userId);
 
