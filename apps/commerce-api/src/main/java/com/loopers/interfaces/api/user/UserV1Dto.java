@@ -17,7 +17,7 @@ public class UserV1Dto {
                     info.id(),
                     info.loginId(),
                     info.email(),
-                    info.birthDate(),
+                    String.valueOf(info.birthDate()),
                     info.gender()
             );
         }

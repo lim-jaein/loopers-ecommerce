@@ -28,4 +28,9 @@ public class PointService {
 
         return point.increase(amount);
     }
+
+    public Point savePoint(Long userId) {
+        Point point = Point.create(userId, 0);
+        return pointRepository.save(point);
+    }
 }

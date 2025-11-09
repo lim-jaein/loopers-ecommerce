@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static com.loopers.support.fixture.UserFixtures.createValidUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -21,7 +20,7 @@ class PointTest {
         @ValueSource(ints = {0, -1000})
         void chargePoint_failsWhenAmountIsZeroOrNegative(int invalidAmount) {
             // arrange
-            Point point = Point.create(createValidUser());
+            Point point = Point.create(1L, 0);
 
             // act + assert
             CoreException result = assertThrows(CoreException.class, () ->
@@ -35,7 +34,7 @@ class PointTest {
         @Test
         void chargePoint() {
             // arrange
-            Point point = Point.create(createValidUser());
+            Point point = Point.create(1L, 0);
             int chargeAmount = 1000;
 
             // act

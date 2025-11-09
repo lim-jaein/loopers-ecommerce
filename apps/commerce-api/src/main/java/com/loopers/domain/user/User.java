@@ -6,6 +6,10 @@ import com.loopers.support.error.ErrorType;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 @Getter
 @Entity
 @Table(name = "users")
@@ -22,13 +26,13 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
-    private String birthDate;    // yyyy-MM-dd
+    private LocalDate birthDate;    // yyyy-MM-dd
     @Column(nullable = false)
     private Gender gender;
 
     protected User() {}
 
-    private User(String loginId, String password, String email, String birthDate, Gender gender) {
+    private User(String loginId, String password, String email, LocalDate birthDate, Gender gender) {
         this.loginId = loginId;
         this.password = password;
         this.email = email;
@@ -41,22 +45,42 @@ public class User extends BaseEntity {
         validEmail(email);
         validBirthDate(birthDate);
         validGender(gender);
-        return new User(loginId, password, email, birthDate, gender);
+        return new User(loginId, password, email, LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")), gender);
     }
 
     private static void validBirthDate(String birthDate) {
-        if(!birthDate.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
-            throw new CoreException(ErrorType.BAD_REQUEST, "생년월일 형식이 올바르지 않습니다.");
+        LocalDate birthDateObj;
+
+        if (birthDate == null) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "생년월일이 입력되지 않았습니다.");
+        }
+
+        try {
+            birthDateObj = LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        } catch (DateTimeParseException e) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "생년월일은 yyyy-MM-dd 형식이어야 합니다.");
+        }
+
+        if(birthDateObj.isAfter(LocalDate.now())) {
+            System.out.println("1: "+ LocalDate.now());
+            System.out.println("2: "+ birthDateObj.toString());
+            throw new CoreException(ErrorType.BAD_REQUEST, "생년월일은 미래일 수 없습니다.");
         }
     }
 
     private static void validEmail(String email) {
+        if (email == null) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "이메일이 입력되지 않았습니다.");
+        }
         if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
             throw new CoreException(ErrorType.BAD_REQUEST, "이메일 형식이 올바르지 않습니다.");
         }
     }
 
     private static void validLoginID(String loginId) {
+        if (loginId == null) {
+            throw new CoreException(ErrorType.BAD_REQUEST, "ID 가 입력되지 않았습니다.");
+        }
         if (!loginId.matches("^[a-zA-Z0-9]{1,10}$")) {
             throw new CoreException(ErrorType.BAD_REQUEST, "ID 형식이 올바르지 않습니다.");
         }
@@ -64,7 +88,7 @@ public class User extends BaseEntity {
 
     private static void validGender(Gender gender) {
         if (gender == null) {
-            throw new CoreException(ErrorType.BAD_REQUEST, "성별 데이터가 존재하지 않습니다.");
+            throw new CoreException(ErrorType.BAD_REQUEST, "성별 데이터가 입력되지 않았습니다.");
         }
     }
 }
