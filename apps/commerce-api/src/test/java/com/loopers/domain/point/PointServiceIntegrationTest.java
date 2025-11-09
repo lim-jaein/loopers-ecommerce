@@ -49,7 +49,7 @@ class PointServiceIntegrationTest {
             User user = createValidUser();
             userJpaRepository.save(user);
 
-            Point point = Point.create(user);
+            Point point = Point.create(user.getId(), 0);
             pointJpaRepository.save(point);
 
             // act
@@ -101,7 +101,7 @@ class PointServiceIntegrationTest {
             User user = createValidUser();
             userJpaRepository.save(user);
 
-            Point point = Point.create(user);
+            Point point = Point.create(user.getId(), 0);
             pointJpaRepository.save(point);
 
             // act
