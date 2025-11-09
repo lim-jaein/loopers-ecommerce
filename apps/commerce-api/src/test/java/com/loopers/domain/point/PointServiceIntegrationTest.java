@@ -105,12 +105,10 @@ class PointServiceIntegrationTest {
             pointJpaRepository.save(point);
 
             // act
-            pointService.chargePoint(user.getId(), 1000);
-            Optional<Integer> balance = pointService.findPoint(user.getId());
+            int balance = pointService.chargePoint(user.getId(), 1000);
 
             // assert
-            assertThat(balance).isPresent();
-            assertThat(balance.get()).isEqualTo(1000);
+            assertThat(balance).isEqualTo(1000);
         }
     }
 }

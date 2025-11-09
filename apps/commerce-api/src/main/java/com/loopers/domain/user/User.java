@@ -23,12 +23,12 @@ public class User extends BaseEntity {
     private String email;
     @Column(nullable = false)
     private String birthDate;    // yyyy-MM-dd
-
-    private String gender;
+    @Column(nullable = false)
+    private Gender gender;
 
     protected User() {}
 
-    private User(String loginId, String password, String email, String birthDate, String gender) {
+    private User(String loginId, String password, String email, String birthDate, Gender gender) {
         this.loginId = loginId;
         this.password = password;
         this.email = email;
@@ -36,7 +36,7 @@ public class User extends BaseEntity {
         this.gender = gender;
     }
 
-    public static User create(String loginId, String password, String email, String birthDate, String gender) {
+    public static User create(String loginId, String password, String email, String birthDate, Gender gender) {
         validLoginID(loginId);
         validEmail(email);
         validBirthDate(birthDate);
@@ -62,7 +62,7 @@ public class User extends BaseEntity {
         }
     }
 
-    private static void validGender(String gender) {
+    private static void validGender(Gender gender) {
         if (gender == null) {
             throw new CoreException(ErrorType.BAD_REQUEST, "성별 데이터가 존재하지 않습니다.");
         }

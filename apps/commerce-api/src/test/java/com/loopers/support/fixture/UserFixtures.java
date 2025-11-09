@@ -1,5 +1,6 @@
 package com.loopers.support.fixture;
 
+import com.loopers.domain.user.Gender;
 import com.loopers.domain.user.User;
 
 public final class UserFixtures {
@@ -10,7 +11,7 @@ public final class UserFixtures {
     public static String validPassword() { return "limjaein!@3"; }
     public static String validEmail() { return "limjaein@google.com"; }
     public static String validBirthDate() { return "1996-11-27"; }
-    public static String validGender() { return "F"; }
+    public static Gender validGender() { return Gender.FEMALE; }
 
     public static User createValidUser() {
         return User.create(

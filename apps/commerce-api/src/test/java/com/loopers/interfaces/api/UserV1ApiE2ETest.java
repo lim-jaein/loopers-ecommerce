@@ -136,7 +136,7 @@ class UserV1ApiE2ETest {
 
         @DisplayName("존재하지 않는 ID 로 조회할 경우, 404 Not Found 응답을 반환한다.")
         @Test
-        void throwsNotFound_whenLoginIdIsNotProvided() {
+        void throwsNotFound_whenInvalidIdIsProvided() {
 
             Long invalidId = -1L;
             String requestUrl = ENDPOINT_GET.apply(invalidId);
