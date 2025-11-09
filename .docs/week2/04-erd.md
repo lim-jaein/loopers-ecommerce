@@ -8,17 +8,15 @@ products {
     bigint id PK
     varchar name
     bigint brand_id FK
-    Price price
-    Stock stock
+    int price_amount
+    int stock_count
+    int like_count
 }
-product_likes {
+likes {
+    bigint id PK
     bigint user_id PK, FK
     bigint product_id PK, FK
     timestamp deleted_at
-}
-product_like_count {
-    bigint product_id PK, FK
-    int total_count
 }
 users {
     bigint id PK
@@ -31,19 +29,19 @@ users {
 points {
     bigint id PK
     bigint user_id FK 
-    int balance
+    int balance_amount
 }
 orders {
     bigint id PK
     bigint user_id FK
-    orderStatus status
+    varchar status
 }
 order_items {
     bigint id PK
     bigint order_id FK
     bigint product_id FK
     int quantity
-    Price item_price
+    int total_price_amount
 }
 
 brands ||--o{ products : ""
