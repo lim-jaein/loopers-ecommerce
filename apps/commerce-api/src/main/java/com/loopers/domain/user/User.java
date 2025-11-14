@@ -62,8 +62,6 @@ public class User extends BaseEntity {
         }
 
         if(birthDateObj.isAfter(LocalDate.now())) {
-            System.out.println("1: "+ LocalDate.now());
-            System.out.println("2: "+ birthDateObj.toString());
             throw new CoreException(ErrorType.BAD_REQUEST, "생년월일은 미래일 수 없습니다.");
         }
     }
