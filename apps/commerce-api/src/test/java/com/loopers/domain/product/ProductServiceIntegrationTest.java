@@ -88,7 +88,7 @@ class ProductServiceIntegrationTest {
 
         @DisplayName("상품을 최신순 으로 정렬할 수 있다.")
         @Test
-        void t2() {
+        void succeeds_whenSortingProductsByLatest() {
             // arrange
             Page<Product> productPage = productService.getProducts(null, PageRequest.of(0, 20), "LATEST");
 
@@ -100,7 +100,7 @@ class ProductServiceIntegrationTest {
 
         @DisplayName("특정 브랜드의 상품만 필터링할 수 있다.")
         @Test
-        void t3() {
+        void succeeds_whenFilteringProductsByBrand() {
             // arrange
 
             // act
@@ -123,7 +123,7 @@ class ProductServiceIntegrationTest {
 
         @DisplayName("페이징처리가 정상적으로 이루어진다.")
         @Test
-        void t4() {
+        void succeeds_whenPagingProducts() {
             // arrange
 
             // act
@@ -150,7 +150,7 @@ class ProductServiceIntegrationTest {
     class GetDetail {
         @DisplayName("상품ID가 정상이면 특정 상품정보와 브랜드정보, 좋아요 수가 함께 조회된다.")
         @Test
-        void t1() {
+        void succeeds_whenFetchingProductDetail() {
             // arrange
             Brand brand = Brand.create("나이키", "운동복 브랜드입니다.");
             brandJpaRepository.save(brand);
@@ -176,7 +176,7 @@ class ProductServiceIntegrationTest {
 
         @DisplayName("상품ID가 존재하지 않으면, 조회 실패한다.")
         @Test
-        void t2() {
+        void fails_whenProductIdDoesNotExist() {
             // act + assert
             assertThatThrownBy(() -> productFacade.getProductDetail(-1L))
                     .hasMessageContaining("존재하지 않는 상품입니다.");
