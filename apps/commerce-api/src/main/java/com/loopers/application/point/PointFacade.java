@@ -1,5 +1,6 @@
 package com.loopers.application.point;
 
+import com.loopers.domain.common.vo.Money;
 import com.loopers.domain.point.Point;
 import com.loopers.domain.point.PointService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class PointFacade {
     }
 
     @Transactional
-    public int chargePoint(Long userId, int amount) {
+    public Money chargePoint(Long userId, Money amount) {
         return pointService.chargePoint(userId, amount);
     }
 }
