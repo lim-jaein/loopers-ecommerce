@@ -58,7 +58,7 @@ class PointV1ApiE2ETest {
         void returnsPoint_whenValidUserIdIsProvided() {
             // arrange
             User user = userJpaRepository.save(createValidUser());
-            Point point = pointJpaRepository.save(Point.create(user.getId(), 0));
+            Point point = pointJpaRepository.save(Point.create(user.getId()));
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-USER-ID", String.valueOf(user.getId()));
@@ -72,7 +72,7 @@ class PointV1ApiE2ETest {
             assertThat(response.getBody()).isNotNull();
             assertAll(
                 () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
-                () -> assertThat(response.getBody().data().balance()).isEqualTo(point.getBalance())
+                () -> assertThat(response.getBody().data().balance()).isEqualTo(point.getBalance().getAmount().intValue())
             );
         }
 
@@ -103,7 +103,7 @@ class PointV1ApiE2ETest {
         void returnsTotalPoint_whenUserChargesPoint() {
             // arrange
             User user = userJpaRepository.save(createValidUser());
-            Point point = pointJpaRepository.save(Point.create(user.getId(), 0));
+            Point point = pointJpaRepository.save(Point.create(user.getId()));
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-USER-ID", String.valueOf(user.getId()));

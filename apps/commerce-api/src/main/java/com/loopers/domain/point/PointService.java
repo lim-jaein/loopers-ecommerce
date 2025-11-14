@@ -1,5 +1,6 @@
 package com.loopers.domain.point;
 
+import com.loopers.domain.common.vo.Money;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,11 @@ public class PointService {
 
     private final PointRepository pointRepository;
 
-    public Optional<Integer> findPoint(Long userId) {
+    public Optional<Point> findPoint(Long userId) {
+        return pointRepository.findByUserId(userId);
+    }
+
+    public Optional<Money> findPointBalance(Long userId) {
         return pointRepository.findByUserId(userId).map(Point::getBalance);
     }
 
@@ -23,14 +28,14 @@ public class PointService {
         );
     }
 
-    public int chargePoint(Long userId, int amount) {
+    public Money chargePoint(Long userId, Money amount) {
         Point point = getPointOrThrow(userId);
 
-        return point.increase(amount);
+        return point.charge(amount);
     }
 
     public Point savePoint(Long userId) {
-        Point point = Point.create(userId, 0);
+        Point point = Point.create(userId);
         return pointRepository.save(point);
     }
 }
