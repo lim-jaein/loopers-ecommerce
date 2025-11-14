@@ -3,12 +3,12 @@ classDiagram
     direction LR
     class Order {
 	    Long id
+        List<OrderItem> items
 	    User user
 	    OrderStatus status
     }
     class OrderItem {
 	    Long id
-	    Order order
 	    Product product
 	    int quantity
 	    Money totalPrice
@@ -65,14 +65,15 @@ classDiagram
 
 
 
-
-    Point "1" --> "1" User
-    Like "N" --> "1" User
+    Point --> User
+    Like "N" --> User
     User --> Gender
-    Like "N" --> "1" Product
-    OrderItem "N" --> "1" Order
-    OrderItem "N" --> "1" Product
-    Order "N" --> "1" User
+    Like "N" --> Product
+    Order *-- "N" OrderItem
+    OrderItem "N" --> Product
+    Order "N" --> User
     Order --> OrderStatus
-    Product "N" --> "1" Brand
+    Brand o-- "N" Product
+    
+    
 ```
