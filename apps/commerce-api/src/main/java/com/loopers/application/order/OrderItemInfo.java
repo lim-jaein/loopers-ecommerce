@@ -8,7 +8,7 @@ public record OrderItemInfo(
 ){
     public static OrderItemInfo from(OrderItem item) {
         return new OrderItemInfo(
-                item.getId(),
+                item.getProductId(),
                 item.getQuantity()
         );
     }

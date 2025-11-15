@@ -36,7 +36,7 @@ public class LikeDomainService {
             return;
         }
 
-        // 좋아요 상태 -> 종아요 취소
+        // 좋아요 상태 -> 좋아요 취소
         like.unlike();
         product.decreaseLikeCount();
     }

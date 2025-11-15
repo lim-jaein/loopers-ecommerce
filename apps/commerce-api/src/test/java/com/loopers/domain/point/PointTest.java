@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PointTest {
 
-    @DisplayName("포인트를 생성할 떄, ")
+    @DisplayName("포인트를 생성할 때, ")
     @Nested
     class Save {
         @DisplayName("0으로 초기화에 성공한다.")

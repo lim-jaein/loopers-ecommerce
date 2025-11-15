@@ -57,14 +57,14 @@ class OrderServiceIntegrationTest {
         databaseCleanUp.truncateAllTables();
     }
 
-    @DisplayName("주문 등록할 떄,")
+    @DisplayName("주문 등록할 때,")
     @Nested
     class createOrder {
         @DisplayName("재고 및 유저 포인트가 충분하다면 주문 등록 성공한다.")
         @Test
         void succeeds_whenStockAndPointAreSufficient() {
 
-            // assert
+            // arrange
             User user = createValidUser();
             userRepository.save(user);
 
@@ -144,7 +144,7 @@ class OrderServiceIntegrationTest {
         }
     }
 
-    @DisplayName("주문 조회할 떄,")
+    @DisplayName("주문 조회할 때,")
     @Nested
     class getOrder {
 
