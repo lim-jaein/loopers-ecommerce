@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -46,9 +47,6 @@ public class OrderFacade {
             );
         }
 
-        // 주문 저장
-        orderService.createOrder(order);
-
         // 포인트 조회
         Point point = pointService.findPoint(userId)
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "존재하지 않는 유저입니다."));
@@ -62,10 +60,13 @@ public class OrderFacade {
         List<Product> products = productService.findAll(productIds);
 
         Map<Long, Product> productsById = products.stream()
-                .collect(Collectors.toMap(Product::getId, p -> p));
+                .collect(Collectors.toMap(Product::getId, Function.identity(), (existing, duplicate) -> existing));
 
         // 주문처리 도메인서비스 호출
         orderDomainService.processPaymentAndInventory(order, productsById, point);
+
+        // 주문 저장
+        orderService.createOrder(order);
 
         // 주문 정보 외부 시스템 전송
         orderExternalSystemSender.send(order);

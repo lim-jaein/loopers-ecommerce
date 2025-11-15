@@ -33,6 +33,9 @@ public class Product extends BaseEntity {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("상품명은 비어있을 수 없습니다.");
         }
+        if (price == null) {
+            throw new IllegalArgumentException("상품가격은 비어있을 수 없습니다.");
+        }
         if (stock == null) {
             throw new IllegalArgumentException("재고는 비어있을 수 없습니다.");
         }

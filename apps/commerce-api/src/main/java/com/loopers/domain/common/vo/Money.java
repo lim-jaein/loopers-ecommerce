@@ -32,7 +32,7 @@ public class Money {
         return new Money(new BigDecimal(amount));
     }
 
-    public static Money of(int amount) {
+    public static Money of(long amount) {
         return new Money(new BigDecimal(amount));
     }
 

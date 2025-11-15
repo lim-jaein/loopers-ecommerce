@@ -36,7 +36,7 @@ class OrderTest {
             order.addItem(1L, 10, Money.of(1000), Money.of(10000));
             order.addItem(2L, 20, Money.of(2000), Money.of(40000));
 
-            // arrange
+            // assert
             assertThat(order.getItems().size()).isEqualTo(2);
         }
 
