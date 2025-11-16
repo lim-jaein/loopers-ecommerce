@@ -63,17 +63,16 @@ public class StockTest {
             assertThat(decreasedStock.getQuantity()).isEqualTo(5);
         }
 
-        @DisplayName("재고 차감 수량이 0이면 변동 없다.")
-        @Test
-        void succeeds_whenStockIsZero() {
+        @DisplayName("재고 차감 수량이 0보다 작을 수 없다.")
+        @ParameterizedTest
+        @ValueSource(ints = {-1, 0})
+        void succeeds_whenStockIsZero(int invalidQuantity) {
             // arrange
             Stock stock = new Stock(10);
 
-            // act
-            Stock decreasedStock = stock.decrease(0);
-
-            // assert
-            assertThat(decreasedStock.getQuantity()).isEqualTo(10);
+            // act + assert
+            assertThatThrownBy(() -> stock.decrease(invalidQuantity))
+                    .hasMessageContaining("차감 수량은 1 이상이어야 합니다.");
         }
 
         @DisplayName("재고 차감 수량이 재고보다 크면 실패한다.")

@@ -15,7 +15,7 @@ public class OrderItem extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "product_id", nullable = false, unique = true)
+    @Column(name = "product_id", nullable = false)
     private Long productId;
 
     private int quantity;
@@ -30,7 +30,7 @@ public class OrderItem extends BaseEntity {
 
     protected OrderItem() {}
 
-    public OrderItem(Long product_id, int quantity, Money unitPrice, Money totalPrice) {
+    private OrderItem(Long product_id, int quantity, Money unitPrice, Money totalPrice) {
 
         if (product_id == null || product_id <= 0) {
             throw new IllegalArgumentException("상품 ID는 음수 혹은 null일 수 없습니다.");

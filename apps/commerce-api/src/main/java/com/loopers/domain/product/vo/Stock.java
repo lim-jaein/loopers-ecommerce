@@ -22,9 +22,20 @@ public class Stock {
     }
 
     public Stock decrease(int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("차감 수량은 1 이상이어야 합니다.");
+        }
         if (this.quantity < quantity) {
             throw new IllegalArgumentException("주문 상품의 재고가 부족합니다.");
         }
         return new Stock(this.quantity - quantity);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Stock other = (Stock) o;
+        return quantity == other.quantity;
     }
 }

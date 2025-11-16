@@ -17,7 +17,7 @@ public enum ProductSortType {
         return sort;
     }
 
-    public static Sort from (String value) {
+    public static Sort toSort (String value) {
         if(value == null || value.isBlank()) {
             return LATEST.getSort();
         }

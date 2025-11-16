@@ -8,18 +8,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class LikeDomainServiceTest {
-    @Mock
-    private LikeRepository likeRepository;
 
     @InjectMocks
     private  LikeDomainService likeDomainService;
@@ -39,13 +34,14 @@ public class LikeDomainServiceTest {
         void succeeds_whenFirstLike() {
             // arrange
             Product product = productWithId(1L);
+            Like like = Like.create(1L, product.getId());
 
             // act
-            likeDomainService.applyLike(1L, product, null);
+            likeDomainService.applyLike(1L, product, like, true);
 
             // assert
+            assertThat(like.isActive()).isTrue();
             assertThat(product.getLikeCount()).isEqualTo(1);
-            verify(likeRepository, times(1)).save(any(Like.class));
         }
 
         @DisplayName("중복 등록인 경우, Like와 상품의 likeCount는 변하지 않는다. (멱등성 유지)")
@@ -54,13 +50,14 @@ public class LikeDomainServiceTest {
             // arrange
             Product product = productWithId(1L);
             Like like = Like.create(1L, product.getId());
+            int firstLikeCount = product.getLikeCount();
 
             // act
-            likeDomainService.applyLike(1L, product, like);
+            likeDomainService.applyLike(1L, product, like, false);
 
             // assert
-            assertThat(product.getLikeCount()).isEqualTo(0);
-            verify(likeRepository, never()).save(any());
+            assertThat(like.isActive()).isTrue();
+            assertThat(product.getLikeCount()).isEqualTo(firstLikeCount);
         }
     }
     @DisplayName("유저의 좋아요 취소 시,")
@@ -78,9 +75,8 @@ public class LikeDomainServiceTest {
             likeDomainService.applyUnLike(1L, product, like);
 
             // assert
-            assertThat(product.getLikeCount()).isEqualTo(0);
             assertThat(like.isActive()).isFalse();
-            verify(likeRepository, never()).save(any());
+            assertThat(product.getLikeCount()).isEqualTo(0);
         }
 
         @DisplayName("중복 취소인 경우, Like와 상품의 likeCount는 변하지 않는다. (멱등성 유지)")
@@ -90,14 +86,14 @@ public class LikeDomainServiceTest {
             Product product = productWithId(1L);
             Like like = Like.create(1L, product.getId());
             like.unlike();
+            int firstLikeCount = product.getLikeCount();
 
             // act
             likeDomainService.applyUnLike(1L, product, like);
 
             // assert
-            assertThat(product.getLikeCount()).isEqualTo(0);
             assertThat(like.isActive()).isFalse();
-            verify(likeRepository, never()).save(any());
+            assertThat(product.getLikeCount()).isEqualTo(firstLikeCount);
 
         }
     }

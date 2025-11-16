@@ -3,13 +3,13 @@ package com.loopers.infrastructure.like;
 import com.loopers.domain.like.Like;
 import com.loopers.domain.like.LikeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-@Component
+@Repository
 public class LikeRepositoryImpl implements LikeRepository {
     private final LikeJpaRepository likeJpaRepository;
 

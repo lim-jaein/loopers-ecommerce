@@ -16,7 +16,7 @@ public class Product extends BaseEntity {
 
     @Column(name = "brand_id", nullable = false)
     private Long brandId;
-
+    @Column(nullable = false)
     private String name;
     @Embedded
     private Money price;
@@ -32,6 +32,9 @@ public class Product extends BaseEntity {
         }
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("상품명은 비어있을 수 없습니다.");
+        }
+        if (price == null) {
+            throw new IllegalArgumentException("상품가격은 비어있을 수 없습니다.");
         }
         if (stock == null) {
             throw new IllegalArgumentException("재고는 비어있을 수 없습니다.");
@@ -52,6 +55,9 @@ public class Product extends BaseEntity {
     }
 
     public void decreaseLikeCount() {
+        if (this.likeCount <= 0) {
+            throw new IllegalStateException("좋아요 수는 0 미만일 수 없습니다.");
+        }
         this.likeCount -= 1;
     }
 
