@@ -27,8 +27,7 @@ public class User extends BaseEntity {
     private String email;
     @Column(nullable = false)
     private LocalDate birthDate;    // yyyy-MM-dd
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)@Enumerated(EnumType.STRING)
     private Gender gender;
 
     protected User() {}
@@ -44,12 +43,12 @@ public class User extends BaseEntity {
     public static User create(String loginId, String password, String email, String birthDate, Gender gender) {
         validLoginID(loginId);
         validEmail(email);
-        validBirthDate(birthDate);
+        LocalDate birthDateObj = validBirthDate(birthDate);
         validGender(gender);
-        return new User(loginId, password, email, LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")), gender);
+        return new User(loginId, password, email, birthDateObj, gender);
     }
 
-    private static void validBirthDate(String birthDate) {
+    private static LocalDate validBirthDate(String birthDate) {
         LocalDate birthDateObj;
 
         if (birthDate == null) {
@@ -65,13 +64,15 @@ public class User extends BaseEntity {
         if(birthDateObj.isAfter(LocalDate.now())) {
             throw new CoreException(ErrorType.BAD_REQUEST, "생년월일은 미래일 수 없습니다.");
         }
+
+        return birthDateObj;
     }
 
     private static void validEmail(String email) {
         if (email == null) {
             throw new CoreException(ErrorType.BAD_REQUEST, "이메일이 입력되지 않았습니다.");
         }
-        if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+        if (!email.trim().matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
             throw new CoreException(ErrorType.BAD_REQUEST, "이메일 형식이 올바르지 않습니다.");
         }
     }
@@ -80,7 +81,7 @@ public class User extends BaseEntity {
         if (loginId == null) {
             throw new CoreException(ErrorType.BAD_REQUEST, "ID 가 입력되지 않았습니다.");
         }
-        if (!loginId.matches("^[a-zA-Z0-9]{1,10}$")) {
+        if (!loginId.trim().matches("^[a-zA-Z0-9]{1,10}$")) {
             throw new CoreException(ErrorType.BAD_REQUEST, "ID 형식이 올바르지 않습니다.");
         }
     }

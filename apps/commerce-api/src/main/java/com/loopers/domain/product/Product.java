@@ -16,7 +16,7 @@ public class Product extends BaseEntity {
 
     @Column(name = "brand_id", nullable = false)
     private Long brandId;
-
+    @Column(nullable = false)
     private String name;
     @Embedded
     private Money price;
@@ -55,6 +55,9 @@ public class Product extends BaseEntity {
     }
 
     public void decreaseLikeCount() {
+        if (this.likeCount <= 0) {
+            throw new IllegalStateException("좋아요 수는 0 미만일 수 없습니다.");
+        }
         this.likeCount -= 1;
     }
 

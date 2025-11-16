@@ -14,7 +14,7 @@ class BrandTest {
     class Create {
         @DisplayName("신규 브랜드명이 주어지면 정상적으로 생성된다.")
         @Test
-        void succeeds_whenNameAndEnglishNameAreProvided() {
+        void succeeds_whenNameAndDescriptionAreProvided() {
             // arrange
             String name = "나이키";
             String description = "운동복 브랜드입니다.";
@@ -25,7 +25,8 @@ class BrandTest {
             // assert
             assertAll(
                 () -> assertThat(brand).isNotNull(),
-                () -> assertThat(brand.getName()).isEqualTo(name)
+                () -> assertThat(brand.getName()).isEqualTo(name),
+                () -> assertThat(brand.getDescription()).isEqualTo(description)
             );
         }
 

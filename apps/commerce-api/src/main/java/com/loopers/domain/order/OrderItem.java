@@ -30,7 +30,7 @@ public class OrderItem extends BaseEntity {
 
     protected OrderItem() {}
 
-    public OrderItem(Long product_id, int quantity, Money unitPrice, Money totalPrice) {
+    private OrderItem(Long product_id, int quantity, Money unitPrice, Money totalPrice) {
 
         if (product_id == null || product_id <= 0) {
             throw new IllegalArgumentException("상품 ID는 음수 혹은 null일 수 없습니다.");
