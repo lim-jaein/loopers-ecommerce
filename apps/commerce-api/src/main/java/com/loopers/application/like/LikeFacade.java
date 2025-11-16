@@ -6,14 +6,14 @@ import com.loopers.domain.like.LikeService;
 import com.loopers.domain.product.Product;
 import com.loopers.domain.product.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class LikeFacade {
     private final LikeService likeService;
     private final ProductService productService;
@@ -21,16 +21,21 @@ public class LikeFacade {
 
     @Transactional
     public void addLike(Long userId, Long productId) {
-        Product product = productService.getProductForUpdate(productId);
+        Product product = productService.getProduct(productId);
         Optional<Like> like = likeService.findLike(userId, productId);
 
-        likeDomainService.applyLike(userId, product, like.orElse(null));
+        // 최초 좋아요 시
+        if(like.isEmpty()) {
+            likeDomainService.applyLike(userId, product, likeService.createLike(Like.create(userId, product.getId())), true);
+        } else {
+            likeDomainService.applyLike(userId, product, like.get(), false);
+        }
 
     }
 
     @Transactional
     public void removeLike(Long userId, Long productId) {
-        Product product = productService.getProductForUpdate(productId);
+        Product product = productService.getProduct(productId);
         Optional<Like> like = likeService.findLike(userId, productId);
 
         likeDomainService.applyUnLike(userId, product, like.orElse(null));

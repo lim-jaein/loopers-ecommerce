@@ -18,10 +18,10 @@ public class Like {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false, unique = true)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "product_id", nullable = false, unique = true)
+    @Column(name = "product_id", nullable = false)
     private Long productId;
 
     private LocalDateTime deletedAt;    // soft-delete
@@ -29,18 +29,18 @@ public class Like {
     protected Like() {}
 
     public Like(Long userId, Long productId) {
-        this.userId =  userId;
-        this.productId = productId;
-        this.deletedAt = null;
-    }
-
-    public static Like create(Long userId, Long productId) {
         if (userId == null || userId <= 0) {
             throw new IllegalArgumentException("유저 ID는 음수 혹은 null일 수 없습니다.");
         }
         if (productId == null || productId <= 0) {
             throw new IllegalArgumentException("상품 ID는 음수 혹은 null일 수 없습니다.");
         }
+        this.userId =  userId;
+        this.productId = productId;
+        this.deletedAt = null;
+    }
+
+    public static Like create(Long userId, Long productId) {
         return new Like(userId, productId);
     }
 
