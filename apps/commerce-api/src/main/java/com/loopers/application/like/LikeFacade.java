@@ -41,7 +41,6 @@ public class LikeFacade {
         likeDomainService.applyUnLike(userId, product, like.orElse(null));
     }
 
-    @Transactional(readOnly = true)
     public List<Product> getLikedProducts(Long userId) {
         List<Like> likes = likeService.findActiveLikesByUserId(userId);
 

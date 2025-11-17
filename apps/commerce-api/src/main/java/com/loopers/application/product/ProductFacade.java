@@ -18,7 +18,6 @@ public class ProductFacade {
     private final BrandService brandService;
     private final ProductDomainService productDomainService;
 
-    @Transactional(readOnly = true)
     public Page<ProductInfo> getProducts(Long brandId, Pageable pageable, String sort) {
         Page<Product> products = productService.getProducts(brandId, pageable, sort);
         return products.map(ProductInfo::from);
