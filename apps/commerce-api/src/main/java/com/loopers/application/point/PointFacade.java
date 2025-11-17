@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class PointFacade {
     private final PointService pointService;
 
-    @Transactional(readOnly = true)
     public Point getPoint(Long userId) {
         return pointService.getPointOrThrow(userId);
     }
