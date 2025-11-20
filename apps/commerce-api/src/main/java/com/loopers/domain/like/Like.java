@@ -1,7 +1,9 @@
 package com.loopers.domain.like;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +15,7 @@ import static java.time.LocalDateTime.now;
         name = "likes",
         uniqueConstraints = @UniqueConstraint(columnNames = {"product_id", "user_id"})
 )
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +28,6 @@ public class Like {
     private Long productId;
 
     private LocalDateTime deletedAt;    // soft-delete
-
-    protected Like() {}
 
     public Like(Long userId, Long productId) {
         if (userId == null || userId <= 0) {

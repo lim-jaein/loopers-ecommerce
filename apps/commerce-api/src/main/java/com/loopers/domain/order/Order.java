@@ -3,7 +3,9 @@ package com.loopers.domain.order;
 import com.loopers.domain.BaseEntity;
 import com.loopers.domain.common.vo.Money;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "orders")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order extends BaseEntity {
 
     @Id
@@ -26,8 +29,6 @@ public class Order extends BaseEntity {
 
     @Column(nullable = false)
     private OrderStatus status;
-
-    protected Order() {}
 
     public Order(Long userId) {
         if (userId == null || userId <= 0) {
