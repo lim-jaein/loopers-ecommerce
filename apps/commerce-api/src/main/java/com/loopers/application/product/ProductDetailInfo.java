@@ -2,6 +2,7 @@ package com.loopers.application.product;
 
 import com.loopers.domain.brand.Brand;
 import com.loopers.domain.product.Product;
+import com.loopers.domain.stock.Stock;
 
 import java.math.BigDecimal;
 
@@ -14,14 +15,14 @@ public record ProductDetailInfo(
         int stock,
         int likeCount
 ) {
-    public static ProductDetailInfo of(Product product, Brand brand) {
+    public static ProductDetailInfo of(Product product, Stock stock, Brand brand) {
         return new ProductDetailInfo(
                 product.getId(),
                 product.getName(),
                 brand.getId(),
                 brand.getName(),
                 product.getPrice().getAmount(),
-                product.getStock().getQuantity(),
+                stock.getQuantity(),
                 product.getLikeCount()
         );
     }

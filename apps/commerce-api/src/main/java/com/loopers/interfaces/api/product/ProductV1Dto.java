@@ -10,7 +10,6 @@ public class ProductV1Dto {
             Long productId,
             String productName,
             BigDecimal price,
-            int stock,
             int likeCount
     ) {
         public static ProductResponse from(ProductInfo info) {
@@ -18,7 +17,6 @@ public class ProductV1Dto {
                     info.productId(),
                     info.productName(),
                     info.price(),
-                    info.stock(),
                     info.likeCount()
             );
         }

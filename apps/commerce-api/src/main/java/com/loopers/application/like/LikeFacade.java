@@ -5,40 +5,58 @@ import com.loopers.domain.like.LikeDomainService;
 import com.loopers.domain.like.LikeService;
 import com.loopers.domain.product.Product;
 import com.loopers.domain.product.ProductService;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class LikeFacade {
+    private static final int retryCount = 3;
+
+    private final LikeTxService likeTxService;
     private final LikeService likeService;
     private final ProductService productService;
-    private final LikeDomainService likeDomainService;
 
-    @Transactional
     public void addLike(Long userId, Long productId) {
-        Product product = productService.getProduct(productId);
-        Optional<Like> like = likeService.findLike(userId, productId);
+        long jitter = 0L;
 
-        // 최초 좋아요 시
-        if(like.isEmpty()) {
-            likeDomainService.applyLike(userId, product, likeService.createLike(Like.create(userId, product.getId())), true);
-        } else {
-            likeDomainService.applyLike(userId, product, like.get(), false);
+        for (int i = 0; i < retryCount; i++) {
+            try {
+                likeTxService.addTxLike(userId, productId);
+                return; // 성공 시 종료
+            } catch (OptimisticLockingFailureException e) {
+                try {
+                    jitter = ThreadLocalRandom.current().nextLong(0, 100);
+                    Thread.sleep(5 * (1 << i) + jitter);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                if (i == retryCount - 1) throw e;
+            }
         }
-
     }
 
-    @Transactional
     public void removeLike(Long userId, Long productId) {
-        Product product = productService.getProduct(productId);
-        Optional<Like> like = likeService.findLike(userId, productId);
+        long jitter = 0L;
 
-        likeDomainService.applyUnLike(userId, product, like.orElse(null));
+        for (int i = 0; i < retryCount; i++) {
+            try {
+                likeTxService.removeTxLike(userId, productId);
+                return;
+            } catch (OptimisticLockingFailureException e) {
+                try {
+                    jitter = ThreadLocalRandom.current().nextLong(0, 100);
+                    Thread.sleep(5 * (1 << i) + ThreadLocalRandom.current().nextLong(0, 100));
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                if (i == retryCount - 1) throw e;
+            }
+        }
     }
 
     public List<Product> getLikedProducts(Long userId) {
