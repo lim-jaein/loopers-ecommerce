@@ -1,4 +1,4 @@
-package com.loopers.domain.product.vo;
+package com.loopers.domain.stock;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,7 +19,7 @@ public class StockTest {
         @Test
         void succeeds_whenStockIsZero() {
             // arrange + act
-            Stock stock = new Stock(0);
+            Stock stock = Stock.create(1L, 0);
 
             // assert
             assertThat(stock.getQuantity()).isEqualTo(0);
@@ -30,7 +30,7 @@ public class StockTest {
         @ValueSource(ints = {1, 100})
         void succeeds_whenStockIsPositive(int validStock) {
             // arrange + act
-            Stock stock = new Stock(validStock);
+            Stock stock = Stock.create(1L, validStock);
 
             // assert
             assertThat(stock.getQuantity()).isEqualTo(validStock);
@@ -40,7 +40,7 @@ public class StockTest {
         @Test
         void fails_whenStockIsLessThanZero() {
             // arrange + act + assert
-            assertThatThrownBy(() -> new Stock(-100))
+            assertThatThrownBy(() -> Stock.create(1L, -100))
                     .hasMessageContaining("재고는 0보다 작을 수 없습니다.");
 
         }
@@ -54,13 +54,13 @@ public class StockTest {
         @Test
         void succeeds_whenStockIsPositive() {
             // arrange
-            Stock stock = new Stock(10);
+            Stock stock = Stock.create(1L, 10);
 
             // act
-            Stock decreasedStock = stock.decrease(5);
+            stock.decrease(5);
 
             // assert
-            assertThat(decreasedStock.getQuantity()).isEqualTo(5);
+            assertThat(stock.getQuantity()).isEqualTo(5);
         }
 
         @DisplayName("재고 차감 수량이 0보다 작을 수 없다.")
@@ -68,7 +68,7 @@ public class StockTest {
         @ValueSource(ints = {-1, 0})
         void succeeds_whenStockIsZero(int invalidQuantity) {
             // arrange
-            Stock stock = new Stock(10);
+            Stock stock = Stock.create(1L, 10);
 
             // act + assert
             assertThatThrownBy(() -> stock.decrease(invalidQuantity))
@@ -79,7 +79,7 @@ public class StockTest {
         @Test
         void fails_whenNotEnoughStock() {
             // arrange
-            Stock stock = new Stock(10);
+            Stock stock = Stock.create(1L, 10);
 
             // act + assert
             assertThatThrownBy(() -> stock.decrease(11))
