@@ -2,7 +2,6 @@ package com.loopers.domain.like;
 
 import com.loopers.domain.common.vo.Money;
 import com.loopers.domain.product.Product;
-import com.loopers.domain.product.vo.Stock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ public class LikeDomainServiceTest {
     private  LikeDomainService likeDomainService;
 
     private Product productWithId(Long id) {
-        Product product = Product.create(1L, "상품이름1", Money.of(1000), Stock.of(1));
+        Product product = Product.create(1L, "상품이름1", Money.of(1000));
         ReflectionTestUtils.setField(product, "id", id);
         return product;
     }

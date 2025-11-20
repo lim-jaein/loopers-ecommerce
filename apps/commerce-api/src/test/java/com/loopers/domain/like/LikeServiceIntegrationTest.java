@@ -4,7 +4,6 @@ import com.loopers.application.like.LikeFacade;
 import com.loopers.domain.common.vo.Money;
 import com.loopers.domain.product.Product;
 import com.loopers.domain.product.ProductRepository;
-import com.loopers.domain.product.vo.Stock;
 import com.loopers.domain.user.User;
 import com.loopers.domain.user.UserRepository;
 import com.loopers.utils.DatabaseCleanUp;
@@ -47,7 +46,7 @@ class LikeServiceIntegrationTest {
     }
 
     private Product createValidProduct() {
-        return Product.create(1L, "상품이름1", Money.of(1000), Stock.of(1));
+        return Product.create(1L, "상품이름1", Money.of(1000));
     }
 
     @DisplayName("유저가 좋아요 등록 시,")
