@@ -262,16 +262,18 @@ public class OrderConcurrencyTest {
         List<OrderItemInfo> orderItemInfos = new ArrayList<>();
         orderItemInfos.add(OrderItemInfo.of(product1.getId(), 1));
         orderItemInfos.add(OrderItemInfo.of(product2.getId(), 1));
+        List<OrderItemInfo> orderItemInfosReversed = orderItemInfos.stream()
+                .sorted(Comparator.comparing(OrderItemInfo::productId).reversed())
+                .toList();
 
         List<CompletableFuture<Void>> futures = IntStream.range(0, 2)
                 .mapToObj(i ->
                         CompletableFuture.runAsync(() -> {
                             if(i == 0) {
-                                orderItemInfos.sort(Comparator.comparing(OrderItemInfo::productId));
+                                orderFacade.createOrder(users.get(i).getId(), orderItemInfos);
                             }else {
-                                orderItemInfos.sort(Comparator.comparing(OrderItemInfo::productId).reversed());
+                                orderFacade.createOrder(users.get(i).getId(), orderItemInfosReversed);
                             }
-                            orderFacade.createOrder(users.get(i).getId(), orderItemInfos);
                         }, executorService)
                 ).toList();
 
