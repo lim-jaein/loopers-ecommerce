@@ -1,11 +1,13 @@
 package com.loopers.domain.brand;
 
+import com.loopers.support.error.CoreException;
+import com.loopers.support.error.ErrorType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class BrandService {
 
     private final BrandRepository brandRepository;
@@ -13,6 +15,6 @@ public class BrandService {
     @Transactional(readOnly = true)
     public Brand getBrand(Long id) {
         return brandRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 브랜드입니다."));
+            .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "존재하지 않는 브랜드입니다."));
     }
 }
