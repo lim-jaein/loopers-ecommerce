@@ -144,16 +144,18 @@ public class LikeConcurrencyTest {
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
         User user = userRepository.save(createValidUser());
-        Product product = productRepository.save(
-                createValidProduct()
-        );
+        Product product = createValidProduct();
+        product.increaseLikeCount();
+        Product savedProduct = productRepository.save(product);
+
+        likeFacade.addLike(user.getId(), savedProduct.getId());
 
         // act
         IntStream.range(0, threadCount).forEach(i -> {
             executorService.submit(() -> {
                 try {
                     // 같은 유저의 좋아요 서비스 호출
-                    likeFacade.addLike(1L, 1L);
+                    likeFacade.removeLike(1L, 1L);
                 } catch (OptimisticLockException | ObjectOptimisticLockingFailureException | StaleObjectStateException e) {
                     e.printStackTrace();
                     System.out.println("실패: " + e.getMessage());
@@ -165,8 +167,8 @@ public class LikeConcurrencyTest {
         countDownLatch.await();
 
         // assert
-        Product product2 = productRepository.findById(1L).orElseThrow();
-        assertThat(product2.getLikeCount()).isEqualTo(1);
+        Product result = productRepository.findById(1L).orElseThrow();
+        assertThat(result.getLikeCount()).isEqualTo(1);
     }
 
 
