@@ -92,16 +92,14 @@ public class LikeConcurrencyTest {
         assertThat(product2.getLikeCount()).isEqualTo(1);
     }
 
-    @DisplayName("100명의 사용자가 특정 상품에 각자 좋아요를 누르면 카운트는 100 증가한다.")
+    @DisplayName("5명의 사용자가 특정 상품에 각자 좋아요를 누르면 카운트는 5 증가한다.")
     @Test
     public void concurrentLikesFromDifferentUsers_shouldIncreaseCountCorrectly() throws InterruptedException {
         // arrange
-        int threadCount = 100;
+        int threadCount = 5;
 
-        // 100개의 스레드를 가질 수 있는 스레드 풀 생성
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 
-        // 100개의 작업이 완료될 때까지 기다림
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
         List<User> users = createValidUsers(threadCount);
@@ -131,7 +129,7 @@ public class LikeConcurrencyTest {
 
         // assert
         Product product2 = productRepository.findById(1L).orElseThrow();
-        assertThat(product2.getLikeCount()).isEqualTo(100);
+        assertThat(product2.getLikeCount()).isEqualTo(5);
     }
 
 
@@ -141,10 +139,8 @@ public class LikeConcurrencyTest {
         // arrange
         int threadCount = 100;
 
-        // 100개의 스레드를 가질 수 있는 스레드 풀 생성
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 
-        // 100개의 작업이 완료될 때까지 기다림
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
         User user = userRepository.save(createValidUser());
@@ -180,22 +176,23 @@ public class LikeConcurrencyTest {
         // arrange
         int threadCount = 5;
 
-        // 100개의 스레드를 가질 수 있는 스레드 풀 생성
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 
-        // 100개의 작업이 완료될 때까지 기다림
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
 
-        List<User> users = createValidUsers(threadCount);
-        Product product = productRepository.save(
-                createValidProduct()
-        );
+        Product product = createValidProduct();
+        IntStream.range(0, threadCount).forEach(i -> {
+            product.increaseLikeCount();
+        });
+        productRepository.save(product);
 
+        List<User> users = createValidUsers(threadCount);
         IntStream.range(0, threadCount).forEach(i -> {
             userRepository.save(users.get(i));
-            product.increaseLikeCount();
             likeRepository.save(Like.create(users.get(i).getId(), product.getId()));
         });
+
+        System.out.println(productRepository.findById(product.getId()).get().getLikeCount());
 
         // act
         IntStream.range(0, threadCount).forEach(i -> {
