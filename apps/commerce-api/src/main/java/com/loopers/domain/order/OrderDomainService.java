@@ -1,29 +1,29 @@
 package com.loopers.domain.order;
 
+import com.loopers.application.order.OrderItemContext;
 import com.loopers.domain.common.vo.Money;
 import com.loopers.domain.point.Point;
-import com.loopers.domain.product.Product;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.List;
 
 @Service
 public class OrderDomainService {
 
-    public void processPaymentAndInventory(Order order, Map<Long, Product> productsById, Point point) {
+    public void processPaymentAndInventory(Order order, List<OrderItemContext> orderItemContexts, Point point) {
+        int totalAmount = 0;
 
-        Money totalAmount = order.getItems().stream()
-                .map(OrderItem::getTotalPrice)
-                .reduce(Money.zero(), Money::plus);
+        for (OrderItemContext item : orderItemContexts) {
 
-        // 주문 상품별 재고 차감
-        for (OrderItem item : order.getItems()) {
-            Product product = productsById.get(item.getProductId());
-            product.deductStock(item.getQuantity());
+            // 주문 상품별 재고 차감
+            item.stock().decrease(item.orderQuantity());
+
+            // 전체 금액 계산
+            totalAmount += item.orderPrice().getAmount().intValue();
         }
 
         // 결제 : 유저 포인트 차감
-        point.use(totalAmount);
+        point.use(Money.of(totalAmount));
 
         // 결제 완료 (PAID) : 주문 상태 변경
         order.changeToPaid();

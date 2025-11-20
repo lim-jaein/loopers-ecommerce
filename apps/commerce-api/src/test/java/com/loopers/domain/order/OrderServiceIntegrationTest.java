@@ -7,7 +7,8 @@ import com.loopers.domain.point.Point;
 import com.loopers.domain.point.PointRepository;
 import com.loopers.domain.product.Product;
 import com.loopers.domain.product.ProductRepository;
-import com.loopers.domain.product.vo.Stock;
+import com.loopers.domain.stock.Stock;
+import com.loopers.domain.stock.StockRepository;
 import com.loopers.domain.user.User;
 import com.loopers.domain.user.UserRepository;
 import com.loopers.support.error.CoreException;
@@ -47,6 +48,9 @@ class OrderServiceIntegrationTest {
     private PointRepository pointRepository;
 
     @Autowired
+    private StockRepository stockRepository;
+
+    @Autowired
     private OrderFacade orderFacade;
 
     @Autowired
@@ -68,10 +72,13 @@ class OrderServiceIntegrationTest {
             User user = createValidUser();
             userRepository.save(user);
 
-            Product product1 = Product.create(1L, "상품이름1", Money.of(1000), Stock.of(1));
-            Product product2 = Product.create(2L, "상품이름2", Money.of(2000), Stock.of(1));
+            Product product1 = Product.create(1L, "상품이름1", Money.of(1000));
+            Product product2 = Product.create(2L, "상품이름2", Money.of(2000));
             productRepository.save(product1);
             productRepository.save(product2);
+
+            stockRepository.save(Stock.create(product1.getId(), 1));
+            stockRepository.save(Stock.create(product2.getId(), 1));
 
             pointRepository.save(Point.create(user.getId(), Money.of(3000)));
 
@@ -96,7 +103,7 @@ class OrderServiceIntegrationTest {
             );
         }
 
-        @DisplayName("상품의 재고가 부족한 경우 주문 실패한다.")
+        @DisplayName("상품의 재고가 부족한 경우 주문 실패하며 모두 롤백처리된다.")
         @Test
         void fails_whenProductStockIsInsufficient() {
 
@@ -104,10 +111,13 @@ class OrderServiceIntegrationTest {
             User user = createValidUser();
             userRepository.save(user);
 
-            Product product1 = Product.create(1L, "상품이름1", Money.of(1000), Stock.of(1));
-            Product product2 = Product.create(2L, "상품이름2", Money.of(2000), Stock.of(1));
+            Product product1 = Product.create(1L, "상품이름1", Money.of(1000));
+            Product product2 = Product.create(2L, "상품이름2", Money.of(2000));
             productRepository.save(product1);
             productRepository.save(product2);
+
+            stockRepository.save(Stock.create(product1.getId(), 1));
+            stockRepository.save(Stock.create(product2.getId(), 1));
 
             pointRepository.save(Point.create(user.getId(), Money.of(3000)));
 
@@ -118,19 +128,34 @@ class OrderServiceIntegrationTest {
             // act + assert
             assertThatThrownBy(() -> orderFacade.createOrder(user.getId(), itemInfoList))
                     .hasMessageContaining("주문 상품의 재고가 부족합니다.");
+
+            Stock unsavedStock1 = stockRepository.findByProductId(product1.getId()).orElseThrow();
+            Stock unsavedStock2 = stockRepository.findByProductId(product2.getId()).orElseThrow();
+            Point unsavedPoint = pointRepository.findByUserId(user.getId()).orElseThrow();
+            List<Order> orders = orderRepository.findAllByUserId(user.getId());
+
+            assertAll(
+                    () -> assertThat(unsavedStock1.getQuantity()).isEqualTo(1),
+                    () -> assertThat(unsavedStock2.getQuantity()).isEqualTo(1),
+                    () -> assertThat(unsavedPoint.getBalance()).isEqualTo(Money.of(3000)),
+                    () -> assertThat(orders.isEmpty()).isTrue()
+            );
         }
 
-        @DisplayName("유저 포인트가 주문 금액보다 부족한 경우 주문 실패한다.")
+        @DisplayName("유저 포인트가 주문 금액보다 부족한 경우 주문 실패하며 모두 롤백처리된다.")
         @Test
         void fails_whenUserPointIsNotEnough() {
             // assert
             User user = createValidUser();
             userRepository.save(user);
 
-            Product product1 = Product.create(1L, "상품이름1", Money.of(1000), Stock.of(1));
-            Product product2 = Product.create(2L, "상품이름2", Money.of(2000), Stock.of(1));
+            Product product1 = Product.create(1L, "상품이름1", Money.of(1000));
+            Product product2 = Product.create(2L, "상품이름2", Money.of(2000));
             productRepository.save(product1);
             productRepository.save(product2);
+
+            stockRepository.save(Stock.create(product1.getId(), 1));
+            stockRepository.save(Stock.create(product2.getId(), 1));
 
             pointRepository.save(Point.create(user.getId(), Money.of(0)));
 
@@ -141,6 +166,18 @@ class OrderServiceIntegrationTest {
             // act + assert
             assertThatThrownBy(() -> orderFacade.createOrder(user.getId(), itemInfoList))
                     .hasMessageContaining("잔여 포인트가 부족합니다.");
+
+            Stock unsavedStock1 = stockRepository.findByProductId(product1.getId()).orElseThrow();
+            Stock unsavedStock2 = stockRepository.findByProductId(product2.getId()).orElseThrow();
+            Point unsavedPoint = pointRepository.findByUserId(user.getId()).orElseThrow();
+            List<Order> orders = orderRepository.findAllByUserId(user.getId());
+
+            assertAll(
+                    () -> assertThat(unsavedStock1.getQuantity()).isEqualTo(1),
+                    () -> assertThat(unsavedStock2.getQuantity()).isEqualTo(1),
+                    () -> assertThat(unsavedPoint.getBalance()).isEqualTo(Money.of(0)),
+                    () -> assertThat(orders.isEmpty()).isTrue()
+            );
         }
     }
 
@@ -176,7 +213,8 @@ class OrderServiceIntegrationTest {
             // arrange
             User user = userRepository.save(createValidUser());
 
-            Product product = Product.create(1L, "상품이름1", Money.of(1000), Stock.of(1));
+            Product product = Product.create(1L, "상품이름1", Money.of(1000)
+);
             productRepository.save(product);
 
             Order order = orderRepository.save(Order.create(user.getId()));

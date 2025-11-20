@@ -3,11 +3,14 @@ package com.loopers.domain.order;
 import com.loopers.domain.BaseEntity;
 import com.loopers.domain.common.vo.Money;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "order_items")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItem extends BaseEntity {
 
 
@@ -27,8 +30,6 @@ public class OrderItem extends BaseEntity {
     @Embedded
     @AttributeOverride(name = "amount", column = @Column(name = "total_price"))
     private Money totalPrice;
-
-    protected OrderItem() {}
 
     private OrderItem(Long product_id, int quantity, Money unitPrice, Money totalPrice) {
 
