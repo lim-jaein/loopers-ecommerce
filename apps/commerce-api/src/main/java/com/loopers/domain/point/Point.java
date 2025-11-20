@@ -3,11 +3,14 @@ package com.loopers.domain.point;
 import com.loopers.domain.BaseEntity;
 import com.loopers.domain.common.vo.Money;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "points")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Point extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,8 +21,6 @@ public class Point extends BaseEntity {
 
     @Column(nullable = false)
     private Money balance;
-
-    protected Point() {}
 
     private Point(Long userId, Money balance) {
         this.userId = userId;

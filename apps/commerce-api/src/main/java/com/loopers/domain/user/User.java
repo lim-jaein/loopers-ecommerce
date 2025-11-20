@@ -4,7 +4,9 @@ import com.loopers.domain.BaseEntity;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +15,7 @@ import java.time.format.DateTimeParseException;
 @Getter
 @Entity
 @Table(name = "users")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,8 +32,6 @@ public class User extends BaseEntity {
     private LocalDate birthDate;    // yyyy-MM-dd
     @Column(nullable = false)@Enumerated(EnumType.STRING)
     private Gender gender;
-
-    protected User() {}
 
     private User(String loginId, String password, String email, LocalDate birthDate, Gender gender) {
         this.loginId = loginId;
