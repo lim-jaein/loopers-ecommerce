@@ -19,7 +19,7 @@ public class PointService {
     }
 
     public Optional<Point> findPointWithLock(Long userId) {
-        return pointRepository.findByIdWithLock(userId);
+        return pointRepository.findByUserIdWithLock(userId);
     }
 
     public Optional<Money> findPointBalance(Long userId) {

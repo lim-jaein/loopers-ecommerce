@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.util.Optional;
 
 @Service
@@ -19,7 +18,6 @@ public class LikeTxService {
     private final LikeService likeService;
     private final ProductService productService;
     private final LikeDomainService likeDomainService;
-    private final DataSource dataSource;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void addTxLike(Long userId, Long productId) {

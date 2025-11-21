@@ -38,9 +38,6 @@ public class Product extends BaseEntity {
         if (price == null) {
             throw new IllegalArgumentException("상품가격은 비어있을 수 없습니다.");
         }
-//        if (stock == null) {
-//            throw new IllegalArgumentException("재고는 비어있을 수 없습니다.");
-//        }
         this.brandId = brandId;
         this.name = name;
         this.price = price;
@@ -61,8 +58,4 @@ public class Product extends BaseEntity {
         }
         this.likeCount -= 1;
     }
-
-//    public void deductStock(int deductQty) {
-//        this.stock = this.stock.decrease(deductQty);
-//    }
 }
