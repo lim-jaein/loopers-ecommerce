@@ -16,6 +16,9 @@ public class StockService {
 
     public Map<Long, Stock> getStocksByProductIds(List<Long> productIds) {
         List<Stock> stocks = stockRepository.findAllByProductIdIn(productIds);
+        if(stocks.isEmpty()) {
+            throw new CoreException(ErrorType.NOT_FOUND, "상품의 재고가 존재하지 않습니다.");
+        }
         return stocks.stream()
                 .collect(Collectors.toMap(Stock::getProductId, stock -> stock));
     }
