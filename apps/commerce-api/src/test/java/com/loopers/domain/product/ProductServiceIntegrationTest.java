@@ -6,7 +6,8 @@ import com.loopers.domain.BaseEntity;
 import com.loopers.domain.brand.Brand;
 import com.loopers.domain.brand.BrandService;
 import com.loopers.domain.common.vo.Money;
-import com.loopers.domain.product.vo.Stock;
+import com.loopers.domain.stock.Stock;
+import com.loopers.domain.stock.StockRepository;
 import com.loopers.infrastructure.brand.BrandJpaRepository;
 import com.loopers.infrastructure.product.ProductJpaRepository;
 import com.loopers.utils.DatabaseCleanUp;
@@ -37,6 +38,9 @@ class ProductServiceIntegrationTest {
     private BrandJpaRepository brandJpaRepository;
 
     @Autowired
+    private StockRepository stockRepository;
+
+    @Autowired
     ProductFacade productFacade;
 
     @Autowired
@@ -53,7 +57,7 @@ class ProductServiceIntegrationTest {
         long brandId = 1;
         for(int i=1; i<=40; i++) {
             brandId = (i - 1) % brandCount + 1;
-            productJpaRepository.save(Product.create(brandId, "상품이름" + i, Money.of(10*i), Stock.of(i)));
+            productJpaRepository.save(Product.create(brandId, "상품이름" + i, Money.of(10*i)));
         }
     }
 
@@ -79,7 +83,6 @@ class ProductServiceIntegrationTest {
                             p = productPage.getContent().get(i);
                             assertThat(p.getName()).isEqualTo("상품이름" + (40-i));
                             assertThat(p.getPrice().getAmount()).isEqualByComparingTo(String.valueOf(10*(40-i)));
-                            assertThat(p.getStock().getQuantity()).isEqualTo((40-i));
                             assertThat(p.getLikeCount()).isEqualTo(0);
                         }
                     }
@@ -154,8 +157,9 @@ class ProductServiceIntegrationTest {
             // arrange
             Brand brand = Brand.create("나이키", "운동복 브랜드입니다.");
             brandJpaRepository.save(brand);
-            Product product = Product.create(brand.getId(), "추가상품1", Money.of("10000"), Stock.of(10));
+            Product product = Product.create(brand.getId(), "추가상품1", Money.of("10000"));
             productJpaRepository.save(product);
+            stockRepository.save(Stock.create(product.getId(), 1));
 
             // act
             ProductDetailInfo detail = productFacade.getProductDetail(product.getId());
@@ -168,7 +172,6 @@ class ProductServiceIntegrationTest {
                     () -> assertThat(detail.productId()).isEqualTo(product.getId()),
                     () -> assertThat(detail.productName()).isEqualTo(product.getName()),
                     () -> assertThat(detail.price()).isEqualByComparingTo(product.getPrice().getAmount()),
-                    () -> assertThat(detail.stock()).isEqualTo(product.getStock().getQuantity()),
                     () -> assertThat(detail.likeCount()).isEqualTo(product.getLikeCount())
 
             );

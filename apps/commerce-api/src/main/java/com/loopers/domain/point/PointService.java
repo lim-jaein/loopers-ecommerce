@@ -18,6 +18,10 @@ public class PointService {
         return pointRepository.findByUserId(userId);
     }
 
+    public Optional<Point> findPointWithLock(Long userId) {
+        return pointRepository.findByUserIdWithLock(userId);
+    }
+
     public Optional<Money> findPointBalance(Long userId) {
         return pointRepository.findByUserId(userId).map(Point::getBalance);
     }

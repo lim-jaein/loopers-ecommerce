@@ -1,12 +1,15 @@
 package com.loopers.domain.common.vo;
 
 import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Getter
 @Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Money {
 
     private BigDecimal amount;
@@ -17,8 +20,6 @@ public class Money {
         }
         this.amount = amount;
     }
-
-    protected Money() {}
 
     public static Money zero() {
         return new Money(BigDecimal.ZERO);

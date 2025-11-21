@@ -8,7 +8,6 @@ public record ProductInfo(
         Long productId,
         String productName,
         BigDecimal price,
-        int stock,
         int likeCount
 ) {
     public static ProductInfo from(Product product) {
@@ -16,7 +15,6 @@ public record ProductInfo(
                 product.getId(),
                 product.getName(),
                 product.getPrice().getAmount(),
-                product.getStock().getQuantity(),
                 product.getLikeCount()
         );
     }
