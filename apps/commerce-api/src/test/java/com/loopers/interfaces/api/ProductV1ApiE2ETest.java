@@ -87,7 +87,7 @@ class ProductV1ApiE2ETest {
     @BeforeEach
     void setUp() {
         // 사용자 생성
-        List<User> users = createValidUsers(40);
+        users = createValidUsers(40);
         IntStream.range(0, 40).forEach(i -> {
             userJpaRepository.save(users.get(i));
         });
@@ -237,6 +237,33 @@ class ProductV1ApiE2ETest {
 
             assertThat(expectedSortedIds).containsExactlyElementsOf(resultSortedIds);
         }
+
+        @DisplayName("목록 조회 시 캐시가 적용되어 두 번째 호출 시 첫 호출과 동일한 데이터를 반환한다.")
+        @Test
+        void succeeds_whenSecondCallHitsCache() {
+            // arrange
+            String params = "?brandId="+brandA.getId();
+            String url = ENDPOINT_GET + params;
+            String cacheKey = "product:v1:list:brandId="+brandA.getId()+":page=0:size=20:sort=null";
+
+            // act (Cache Miss)
+            ResponseEntity<ApiResponse<ProductV1Dto.PageResponse<ProductV1Dto.ProductResponse>>> firstResponse =
+                    testRestTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
+
+            // 첫 호출 성공 및 캐시 저장 확인
+            assertThat(firstResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(redisTemplate.opsForValue().get(cacheKey)).isNotNull();
+
+            // act (Cache Hit)
+            ResponseEntity<ApiResponse<ProductV1Dto.PageResponse<ProductV1Dto.ProductResponse>>> secondResponse =
+                    testRestTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
+
+            // assert: 두 응답의 내용이 완전히 동일한지 비교
+            assertAll(
+                () -> assertThat(secondResponse.getStatusCode()).isEqualTo(HttpStatus.OK),
+                () -> assertThat(secondResponse.getBody().data()).isEqualTo(firstResponse.getBody().data())
+            );
+        }
     }
 
     @DisplayName("GET /api/v1/products/{productId}")
@@ -285,6 +312,33 @@ class ProductV1ApiE2ETest {
             assertAll(
                     () -> assertTrue(response.getStatusCode().is4xxClientError()),
                     () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND)
+            );
+        }
+
+        @DisplayName("캐시가 적용되어 두 번째 호출 시 첫 호출과 동일한 데이터를 반환한다.")
+        @Test
+        void succeeds_whenSecondCallHitsCache() {
+            // arrange
+            Long productId = 1L;
+            String url = ENDPOINT_GET_ID.apply(productId);
+            String cacheKey = "product:v1:detail:" + productId;
+
+            // act (Cache Miss)
+            ResponseEntity<ApiResponse<ProductV1Dto.ProductDetailResponse>> firstResponse =
+                    testRestTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
+
+            // 첫 호출이 성공했고, 캐시에 데이터가 저장되었는지 확인
+            assertThat(firstResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(redisTemplate.opsForValue().get(cacheKey)).isNotNull();
+            
+            // act (Cache Hit)
+            ResponseEntity<ApiResponse<ProductV1Dto.ProductDetailResponse>> secondResponse =
+                    testRestTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
+
+            // assert: 두 응답의 내용이 완전히 동일한지 비교
+            assertAll(
+                () -> assertThat(secondResponse.getStatusCode()).isEqualTo(HttpStatus.OK),
+                () -> assertThat(secondResponse.getBody().data()).isEqualTo(firstResponse.getBody().data())
             );
         }
     }
