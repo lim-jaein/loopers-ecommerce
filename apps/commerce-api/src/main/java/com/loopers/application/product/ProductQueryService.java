@@ -19,7 +19,7 @@ public class ProductQueryService {
     private final ProductService productService;
     private final ProductLikeCountService productLikeCountService;
 
-    public Page<ProductInfo> getPrductsSortedByLikes(Long brandId, Pageable pageable) {
+    public Page<ProductInfo> getProductsSortedByLikes(Long brandId, Pageable pageable) {
         // MV 조회
         Page<ProductLikeCount> plcPage =
                 productLikeCountService.getProductLikeCountsOrderByLikeCount(brandId, pageable);
@@ -36,7 +36,7 @@ public class ProductQueryService {
         return new PageImpl<>(infoList, pageable, plcPage.getTotalElements());
     }
 
-    public Page<ProductInfo> getPrducts(Long brandId, Pageable pageable, String sort) {
+    public Page<ProductInfo> getProducts(Long brandId, Pageable pageable, String sort) {
         return productService.getProducts(brandId, pageable, sort);
     }
 }
