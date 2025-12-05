@@ -40,9 +40,9 @@ public class ProductFacade {
 
     private Page<ProductInfo> loadProducts(Long brandId, Pageable pageable, String sort) {
         if("likes_desc".equals(sort)) {
-            return productQueryService.getPrductsSortedByLikes(brandId, pageable);
+            return productQueryService.getProductsSortedByLikes(brandId, pageable);
         } else {
-            return productQueryService.getPrducts(brandId, pageable, sort);
+            return productQueryService.getProducts(brandId, pageable, sort);
         }
     }
 
