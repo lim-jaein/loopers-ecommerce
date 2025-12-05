@@ -6,6 +6,8 @@ import com.loopers.domain.point.Point;
 import com.loopers.domain.point.PointService;
 import com.loopers.infrastructure.ResilientPgClient;
 import com.loopers.interfaces.api.payment.PaymentV1Dto;
+import com.loopers.support.error.CoreException;
+import com.loopers.support.error.ErrorType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,7 +29,8 @@ public class PaymentFacade {
                orderService.saveTransactionKey(order.getId(), response.transactionKey());
            }
            case PaymentV1Dto.PointPaymentInfo pointInfo -> {
-               Point point = pointService.findPointWithLock(order.getUserId()).orElseThrow();
+               Point point = pointService.findPointWithLock(order.getUserId()).orElseThrow(
+                       () -> new CoreException(ErrorType.NOT_FOUND, "포인트 정보가 존재하지 않습니다."));
                point.use(order.calculateTotalPrice());
            }
        }
