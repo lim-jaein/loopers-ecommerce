@@ -92,12 +92,12 @@ class OrderServiceIntegrationTest {
             Order result = orderFacade.createOrder(user.getId(), OrderV1Dto.OrderCreateRequest.of(items, new PaymentV1Dto.PointPaymentInfo()));
 
             // assert
-            Point updateddPoint = pointRepository.findByUserId(user.getId()).orElseThrow();
+            Point updatedPoint = pointRepository.findByUserId(user.getId()).orElseThrow();
 
             assertAll(
                 () -> assertThat(result).isNotNull(),
                 () -> assertThat(result.getUserId()).isEqualTo(user.getId()),
-                () -> assertThat(updateddPoint.getBalance()).isEqualTo(Money.of(5000)),
+                () -> assertThat(updatedPoint.getBalance()).isEqualTo(Money.of(5000)),
                 () -> assertThat(result.getStatus()).isEqualTo(OrderStatus.PAID),
                 () -> assertThat(result.getItems().get(0).getProductId()).isEqualTo(product1.getId()),
                 () -> assertThat(result.getItems().get(0).getUnitPrice()).isEqualTo(Money.of(1000)),
