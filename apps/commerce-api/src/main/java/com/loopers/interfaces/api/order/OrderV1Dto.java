@@ -5,22 +5,27 @@ import com.loopers.domain.common.vo.Money;
 import com.loopers.domain.order.Order;
 import com.loopers.domain.order.OrderItem;
 import com.loopers.domain.order.OrderStatus;
+import com.loopers.interfaces.api.payment.PaymentMethod;
 import com.loopers.interfaces.api.payment.PaymentV1Dto;
 
 import java.util.List;
 
 public class OrderV1Dto {
+
     public record OrderCreateRequest(
             List<OrderItemInfo> items,
-            PaymentV1Dto.PaymentRequest payment
+            PaymentMethod payment,
+            PaymentV1Dto.CardPaymentInfo cardPaymentInfo
     ) {
         public static OrderCreateRequest of(
                 List<OrderItemInfo> items,
-                PaymentV1Dto.PaymentRequest payment
+                PaymentMethod payment,
+                PaymentV1Dto.CardPaymentInfo cardPaymentInfo
         ) {
             return new OrderCreateRequest(
                     items,
-                    payment
+                    payment,
+                    cardPaymentInfo
             );
         }
     }

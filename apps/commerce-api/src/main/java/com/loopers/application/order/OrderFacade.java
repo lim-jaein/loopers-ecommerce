@@ -8,7 +8,7 @@ import com.loopers.domain.product.Product;
 import com.loopers.domain.product.ProductService;
 import com.loopers.domain.stock.StockService;
 import com.loopers.interfaces.api.order.OrderV1Dto;
-import com.loopers.interfaces.api.payment.PaymentV1Dto;
+import com.loopers.interfaces.api.payment.PaymentMethod;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import lombok.RequiredArgsConstructor;
@@ -47,10 +47,10 @@ public class OrderFacade {
 
         // 결제
         // 카드 결제 처리 (비동기)
-        paymentFacade.pay(order, request.payment());
+        paymentFacade.pay(order, request.payment(), request.cardPaymentInfo());
 
         // 포인트 결제 성공처리 (동기)
-        if (request.payment() instanceof PaymentV1Dto.PointPaymentInfo) {
+        if (request.payment() == PaymentMethod.POINT) {
             onPaymentSuccess(order.getId());
         }
 
@@ -124,8 +124,8 @@ public class OrderFacade {
     }
 
     @Transactional(readOnly = true)
-    public Order getOrder(Long userId, Long orderId) {
-        return orderService.findOrder(userId, orderId)
+    public Order getOrder(Long userId, Long id) {
+        return orderService.findOrder(userId, id)
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "존재하지 않는 주문입니다."));
     }
 

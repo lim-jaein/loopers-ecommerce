@@ -5,8 +5,7 @@ import com.loopers.support.error.ErrorType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +19,8 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public Optional<Order> findOrder(Long orderId, Long userId) {
-        return orderRepository.findByIdAndUserId(orderId, userId);
+    public Optional<Order> findOrder(Long id, Long userId) {
+        return orderRepository.findByIdAndUserId(id, userId);
     }
 
     public Optional<Order> findOrderById(Long orderId) {
@@ -38,8 +37,8 @@ public class OrderService {
         order.setTransactionKey(transactionKey);
     }
 
-    public List<Order> findPendingOrders(Duration duration) {
-        LocalDateTime threshold = LocalDateTime.now().minus(duration);
+    public List<Order> findPendingOrders(Long duration) {
+        ZonedDateTime threshold = ZonedDateTime.now().minusMinutes(duration);
         return orderRepository.findAllByStatusAndCreatedAtBefore(OrderStatus.PENDING, threshold);
     }
 }

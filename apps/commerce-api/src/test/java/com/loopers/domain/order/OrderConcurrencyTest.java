@@ -13,7 +13,7 @@ import com.loopers.domain.stock.StockRepository;
 import com.loopers.domain.user.User;
 import com.loopers.domain.user.UserRepository;
 import com.loopers.interfaces.api.order.OrderV1Dto;
-import com.loopers.interfaces.api.payment.PaymentV1Dto;
+import com.loopers.interfaces.api.payment.PaymentMethod;
 import com.loopers.utils.DatabaseCleanUp;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -101,7 +101,7 @@ public class OrderConcurrencyTest {
         List<CompletableFuture<Void>> futures = IntStream.range(0, threadCount)
                 .mapToObj(i ->
                         CompletableFuture.runAsync(() -> {
-                            orderFacade.createOrder(user.getId(), OrderV1Dto.OrderCreateRequest.of(List.of(itemInfo), new PaymentV1Dto.PointPaymentInfo()));
+                            orderFacade.createOrder(user.getId(), OrderV1Dto.OrderCreateRequest.of(List.of(itemInfo),  PaymentMethod.POINT, null));
                             }, executorService)
                 )
                 .toList();
@@ -134,7 +134,7 @@ public class OrderConcurrencyTest {
                 .mapToObj(i ->
                         CompletableFuture.supplyAsync(() -> {
                             try {
-                                orderFacade.createOrder(user.getId(), OrderV1Dto.OrderCreateRequest.of(List.of(itemInfo), new PaymentV1Dto.PointPaymentInfo()));
+                                orderFacade.createOrder(user.getId(), OrderV1Dto.OrderCreateRequest.of(List.of(itemInfo),  PaymentMethod.POINT, null));
                                 return "SUCCESS";
                             } catch (Exception e) {
                                 return "FAIL";
@@ -184,7 +184,7 @@ public class OrderConcurrencyTest {
         List<CompletableFuture<Void>> futures = IntStream.range(0, threadCount)
                 .mapToObj(i ->
                         CompletableFuture.runAsync(() -> {
-                            orderFacade.createOrder(users.get(i).getId(), OrderV1Dto.OrderCreateRequest.of(List.of(itemInfo), new PaymentV1Dto.PointPaymentInfo()));
+                            orderFacade.createOrder(users.get(i).getId(), OrderV1Dto.OrderCreateRequest.of(List.of(itemInfo),  PaymentMethod.POINT, null));
                         }, executorService)
                 )
                 .toList();
@@ -220,7 +220,7 @@ public class OrderConcurrencyTest {
                 .mapToObj(i ->
                         CompletableFuture.supplyAsync(() -> {
                             try {
-                                orderFacade.createOrder(users.get(i).getId(), OrderV1Dto.OrderCreateRequest.of(List.of(itemInfo), new PaymentV1Dto.PointPaymentInfo()));
+                                orderFacade.createOrder(users.get(i).getId(), OrderV1Dto.OrderCreateRequest.of(List.of(itemInfo),  PaymentMethod.POINT, null));
                                 return "SUCCESS";
                             } catch (Exception e) {
                                 return "FAIL";
@@ -276,10 +276,10 @@ public class OrderConcurrencyTest {
                 .mapToObj(i ->
                         CompletableFuture.runAsync(() -> {
                             if(i == 0) {
-                                orderFacade.createOrder(users.get(i).getId(), OrderV1Dto.OrderCreateRequest.of(orderItemInfos, new PaymentV1Dto.PointPaymentInfo()));
+                                orderFacade.createOrder(users.get(i).getId(), OrderV1Dto.OrderCreateRequest.of(orderItemInfos,  PaymentMethod.POINT, null));
 
                             }else {
-                                orderFacade.createOrder(users.get(i).getId(), OrderV1Dto.OrderCreateRequest.of(orderItemInfosReversed, new PaymentV1Dto.PointPaymentInfo()));
+                                orderFacade.createOrder(users.get(i).getId(), OrderV1Dto.OrderCreateRequest.of(orderItemInfosReversed,  PaymentMethod.POINT, null));
 
                             }
                         }, executorService)
