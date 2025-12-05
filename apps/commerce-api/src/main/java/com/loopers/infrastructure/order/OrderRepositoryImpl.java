@@ -37,6 +37,6 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public List<Order> findAllByStatusAndCreatedAtBefore(OrderStatus status, LocalDateTime threshold) {
-        return List.of();
+        return orderJpaRepository.findAllByStatusAndCreatedAtBefore(status, threshold);
     }
 }

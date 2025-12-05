@@ -54,13 +54,6 @@ public class OrderFacade {
             onPaymentSuccess(order.getId());
         }
 
-        // 주문 정보 외부 시스템 전송 (실패해도 주문 트랜잭션은 롤백하지 않도록 catch)
-        try {
-            orderExternalSystemSender.send(order);
-        } catch (Exception e) {
-            log.error("외부 시스템으로의 주문 전송 실패, 주문 ID: {}", order.getId(), e);
-        }
-
         return order;
     }
 
@@ -78,6 +71,9 @@ public class OrderFacade {
         // 주문 아이템 세팅
         for (OrderItemInfo info : items) {
             Product product = productsById.get(info.productId());
+            if (product == null) {
+                throw new CoreException(ErrorType.NOT_FOUND, "상품이 존재하지 않습니다. productId: " + info.productId());
+            }
 
             order.addItem(
                     info.productId(),
@@ -91,7 +87,8 @@ public class OrderFacade {
     }
 
     /**
-     * 결제 성공 시 재고 차감 및 주문 완료 처리
+     * 결제 성공 시 재고 차감 및 주문 정보 외부 시스템 전송
+     * 주문 상태 변경 (PENDING -> PAID)
      * @param orderId
      */
     @Transactional
@@ -104,10 +101,17 @@ public class OrderFacade {
 
         // 주문 PAID 처리
         order.changeToPaid();
+
+        // 주문 정보 외부 시스템 전송 (실패해도 주문 트랜잭션은 롤백하지 않도록 catch)
+        try {
+            orderExternalSystemSender.send(order);
+        } catch (Exception e) {
+            log.error("외부 시스템으로의 주문 전송 실패, 주문 ID: {}", order.getId(), e);
+        }
     }
 
     /**
-     * 결제 실패 시 포인트 원복 및 주문 결제중 처리
+     * 결제 실패 시 주문 상태 변경 (PENDING -> FAILED)
      * @param orderId
      */
     @Transactional
