@@ -12,7 +12,7 @@ import com.loopers.domain.stock.StockRepository;
 import com.loopers.domain.user.User;
 import com.loopers.domain.user.UserRepository;
 import com.loopers.interfaces.api.order.OrderV1Dto;
-import com.loopers.interfaces.api.payment.PaymentV1Dto;
+import com.loopers.interfaces.api.payment.PaymentMethod;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import com.loopers.utils.DatabaseCleanUp;
@@ -89,7 +89,7 @@ class OrderServiceIntegrationTest {
             items.add(OrderItemInfo.from(OrderItem.create(product2.getId(), 2, Money.of(2000), Money.of(4000))));
 
             // act
-            Order result = orderFacade.createOrder(user.getId(), OrderV1Dto.OrderCreateRequest.of(items, new PaymentV1Dto.PointPaymentInfo()));
+            Order result = orderFacade.createOrder(user.getId(), OrderV1Dto.OrderCreateRequest.of(items, PaymentMethod.POINT, null));
 
             // assert
             Point updatedPoint = pointRepository.findByUserId(user.getId()).orElseThrow();
@@ -131,7 +131,7 @@ class OrderServiceIntegrationTest {
             items.add(OrderItemInfo.from(OrderItem.create(product2.getId(), 2, Money.of(2000), Money.of(4000))));
 
             // act + assert
-            assertThatThrownBy(() -> orderFacade.createOrder(user.getId(), OrderV1Dto.OrderCreateRequest.of(items, new PaymentV1Dto.PointPaymentInfo())))
+            assertThatThrownBy(() -> orderFacade.createOrder(user.getId(), OrderV1Dto.OrderCreateRequest.of(items, PaymentMethod.POINT, null)))
                     .hasMessageContaining("주문 상품의 재고가 부족합니다.");
 
             Stock unsavedStock1 = stockRepository.findByProductId(product1.getId()).orElseThrow();
@@ -169,7 +169,7 @@ class OrderServiceIntegrationTest {
             items.add(OrderItemInfo.from(OrderItem.create(product2.getId(), 2, Money.of(2000), Money.of(4000))));
 
             // act + assert
-            assertThatThrownBy(() -> orderFacade.createOrder(user.getId(), OrderV1Dto.OrderCreateRequest.of(items, new PaymentV1Dto.PointPaymentInfo())))
+            assertThatThrownBy(() -> orderFacade.createOrder(user.getId(), OrderV1Dto.OrderCreateRequest.of(items,  PaymentMethod.POINT, null)))
                     .hasMessageContaining("잔여 포인트가 부족합니다.");
 
             Stock unsavedStock1 = stockRepository.findByProductId(product1.getId()).orElseThrow();

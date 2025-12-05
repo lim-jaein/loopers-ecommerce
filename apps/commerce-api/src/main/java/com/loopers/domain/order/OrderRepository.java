@@ -1,6 +1,6 @@
 package com.loopers.domain.order;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,5 +13,5 @@ public interface OrderRepository {
 
     List<Order> findAllByUserId(Long userId);
 
-    List<Order> findAllByStatusAndCreatedAtBefore(OrderStatus status, LocalDateTime threshold);
+    List<Order> findAllByStatusAndCreatedAtBefore(OrderStatus status, ZonedDateTime threshold);
 }

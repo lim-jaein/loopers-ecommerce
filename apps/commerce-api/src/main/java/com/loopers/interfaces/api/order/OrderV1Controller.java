@@ -20,6 +20,7 @@ public class OrderV1Controller implements OrderV1ApiSpec {
     private final OrderFacade orderFacade;
 
     @Override
+    @GetMapping
     public ApiResponse<OrderV1Dto.OrderListResponse> getOrders(
             @RequestHeader("X-USER-ID") Long userId
     ) {
@@ -29,10 +30,12 @@ public class OrderV1Controller implements OrderV1ApiSpec {
     }
 
     @Override
+    @GetMapping("/{id}")
     public ApiResponse<OrderV1Dto.OrderDetailResponse> getOrder(
-            @RequestHeader("X-USER-ID") Long userId, Long orderId
+            @RequestHeader("X-USER-ID") Long userId,
+            @PathVariable(value = "id") Long id
     ) {
-        Order order = orderFacade.getOrder(userId, orderId);
+        Order order = orderFacade.getOrder(userId, id);
         OrderV1Dto.OrderDetailResponse response = OrderV1Dto.OrderDetailResponse.from(order);
         return ApiResponse.success(response);
     }

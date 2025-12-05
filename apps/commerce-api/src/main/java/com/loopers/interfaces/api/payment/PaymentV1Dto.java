@@ -5,15 +5,13 @@ import com.loopers.domain.order.Order;
 
 public class PaymentV1Dto {
 
-    public sealed interface PaymentRequest permits CardPaymentInfo, PointPaymentInfo {}
-
     public record CardPaymentInfo (
             String cardType,
             String cardNo
-    ) implements PaymentRequest {
+    ) {
     }
 
-    public record PointPaymentInfo () implements PaymentRequest {
+    public record PointPaymentInfo () {
     }
 
     public record PgPaymentRequest(

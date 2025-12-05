@@ -69,8 +69,8 @@ public class Order extends BaseEntity {
     }
 
     public void changeToPending() {
-        if (this.status != OrderStatus.CREATED) {
-            throw new IllegalStateException("주문 상태가 등록이 아닙니다.");
+        if (this.status != OrderStatus.CREATED && this.status != OrderStatus.FAILED) {
+            throw new IllegalStateException("주문 상태가 등록/취소가 아닙니다.");
         }
         this.status = OrderStatus.PENDING;
     }
