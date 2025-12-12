@@ -59,58 +59,5 @@ public class PaymentResilienceTest {
             // assert
             verify(pgClient, times(3)).requestPayment(any());
         }
-
-        @DisplayName("")
-        @Test
-        public void t2() {
-            // arrange
-
-            // act
-
-            // assert
-        }
-
-        @DisplayName("")
-        @Test
-        public void t3() {
-            // arrange
-
-            // act
-
-            // assert
-        }
-    }
-
-    @DisplayName("Resilience4j 관련 테스트")
-    @Nested
-    class Resilience4j {
-
-        public void succeeds_whenRetryExecutesThreeTimes() {
-            // arrange
-
-            // act
-
-            // assert
-        }
-
-        @DisplayName("")
-        @Test
-        public void t2() {
-            // arrange
-
-            // act
-
-            // assert
-        }
-
-        @DisplayName("")
-        @Test
-        public void t3() {
-            // arrange
-
-            // act
-
-            // assert
-        }
     }
 }
