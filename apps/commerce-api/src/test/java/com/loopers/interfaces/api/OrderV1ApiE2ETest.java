@@ -1,6 +1,8 @@
 package com.loopers.interfaces.api;
 
+import com.loopers.domain.common.vo.Money;
 import com.loopers.domain.order.Order;
+import com.loopers.domain.order.OrderItem;
 import com.loopers.infrastructure.order.OrderJpaRepository;
 import com.loopers.interfaces.api.order.OrderV1Dto;
 import com.loopers.utils.DatabaseCleanUp;
@@ -55,7 +57,9 @@ class OrderV1ApiE2ETest {
             // arrange
             Long userId = 1L;
             Order order = Order.create(userId);
+            order.getItems().add(OrderItem.create(1L, 2, Money.of(1000L), Money.of(1000L).multiply(2)));
             orderJpaRepository.save(order);
+
             String requestUrl = ENDPOINT_GET.apply(order.getId());
 
             HttpHeaders headers = new HttpHeaders();
@@ -81,10 +85,13 @@ class OrderV1ApiE2ETest {
             Long invalidId = -1L;
             String requestUrl = ENDPOINT_GET.apply(invalidId);
 
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-USER-ID", String.valueOf(invalidId));
+
             // act
             ParameterizedTypeReference<ApiResponse<OrderV1Dto.OrderDetailResponse>> responseType = new ParameterizedTypeReference<>() {};
             ResponseEntity<ApiResponse<OrderV1Dto.OrderDetailResponse>> response =
-                testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(null), responseType);
+                testRestTemplate.exchange(requestUrl, HttpMethod.GET, new HttpEntity<>(headers), responseType);
 
             // assert
             assertAll(
