@@ -31,6 +31,7 @@ public class PointService {
         );
     }
 
+    @Transactional
     public Money chargePoint(Long userId, Money amount) {
         Point point = getPointWithLock(userId);
         return point.charge(amount);

@@ -21,6 +21,7 @@ public class ProductLikeCount {
     @Column(name = "brand_id")
     private Long brandId;
 
+    @Column(name = "like_count", nullable = false)
     private int likeCount;
 
     public ProductLikeCount(Long productId, Long brandId) {
