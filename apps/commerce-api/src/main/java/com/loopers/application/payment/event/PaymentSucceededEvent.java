@@ -4,7 +4,7 @@ import java.time.Instant;
 
 public record PaymentSucceededEvent(
         Long orderId,
-        Instant ocurredAt
+        Instant occurredAt
 ) {
     public static PaymentSucceededEvent from(Long orderId) {
         return new PaymentSucceededEvent(

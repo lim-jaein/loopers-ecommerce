@@ -25,8 +25,8 @@ public class OrderService {
     public Optional<Order> findOrderById(Long id) {
         return orderRepository.findById(id);
     }
-    public Optional<Order> findOrderWithItems(Long id) {
-        return orderRepository.findOrderWithItems(id);
+    public Optional<Order> findOrderWithItems(Long userId, Long id) {
+        return orderRepository.findOrderWithItems(userId, id);
     }
 
     public List<Order> findAll(Long userId) {

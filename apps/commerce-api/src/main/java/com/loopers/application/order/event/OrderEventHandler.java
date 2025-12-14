@@ -38,7 +38,7 @@ public class OrderEventHandler {
             // 사용자 요청 이상인 경우만 실패 처리
             // 이외 서버 타임아웃 등은 retry -> pending상태로 스케줄링 시도
             if (e instanceof CoreException ce && ce.getErrorType() == ErrorType.BAD_REQUEST) {
-                eventPublisher.publishEvent(PaymentFailedEvent.of(event.orderId(), e));
+                eventPublisher.publishEvent(PaymentFailedEvent.of(event.userId(), event.orderId(), e));
             }
         }
     }

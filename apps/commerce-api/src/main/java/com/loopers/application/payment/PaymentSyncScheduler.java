@@ -102,7 +102,7 @@ public class PaymentSyncScheduler {
                 // 결과에 따라 OrderFacade 호출
                 switch (paymentStatus) {
                     case paymentStatus.SUCCESS -> paymentFacade.handlePaymentSucceed(order.getId());
-                    case paymentStatus.FAILURE -> paymentFacade.handlePaymentFailure(order.getId());
+                    case paymentStatus.FAILURE -> paymentFacade.handlePaymentFailure(order.getUserId(), order.getId());
                     default -> log.info("주문의 결제 상태가 대기 중이거나 알 수 없습니다, orderId: {}", order.getId());
                 }
 

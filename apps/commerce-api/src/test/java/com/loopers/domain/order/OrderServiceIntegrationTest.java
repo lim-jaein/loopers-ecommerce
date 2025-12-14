@@ -170,7 +170,7 @@ class OrderServiceIntegrationTest {
             // assert
             await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
                 Order failedOrder = orderService.findOrderById(createdOrder.getId()).orElseThrow();
-                assertThat(failedOrder.getStatus()).isEqualTo(OrderStatus.FAILED);  // 디버깅으로 들어가는거 봤는데 왜 안되는지
+                assertThat(failedOrder.getStatus()).isEqualTo(OrderStatus.FAILED);
 
                 Stock revertedStock1 = stockRepository.findByProductId(product1.getId()).orElseThrow();
                 Stock revertedStock2 = stockRepository.findByProductId(product2.getId()).orElseThrow();
@@ -228,8 +228,8 @@ class OrderServiceIntegrationTest {
             );
             orderRepository.save(order);
 
-            // act 페치조인으로 변경?
-            Order result = orderService.findOrderWithItems(order.getId()).get();
+            // act
+            Order result = orderService.findOrderWithItems(user.getId(), order.getId()).get();
 
             // assert
             assertAll(

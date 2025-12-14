@@ -49,7 +49,7 @@ public class OrderFacade {
         paymentService.savePayment(Payment.create(order, request.payment()));
 
         // 5. 이벤트 발행
-        eventPublisher.publishEvent(OrderCreatedEvent.of(order.getId(), userId, request.payment()));
+        eventPublisher.publishEvent(OrderCreatedEvent.of(order.getId(), userId));
 
         return order;
     }
@@ -85,7 +85,7 @@ public class OrderFacade {
 
     @Transactional(readOnly = true)
     public Order getOrder(Long userId, Long id) {
-        return orderService.findOrderWithItems(id)
+        return orderService.findOrderWithItems(userId, id)
                 .orElseThrow(() -> new CoreException(ErrorType.NOT_FOUND, "존재하지 않는 주문입니다."));
     }
 

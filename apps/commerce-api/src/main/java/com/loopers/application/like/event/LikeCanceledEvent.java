@@ -4,7 +4,7 @@ import java.time.Instant;
 
 public record LikeCanceledEvent(
         Long productId,
-        Instant ocurredAt
+        Instant occurredAt
 ) {
     public static LikeCanceledEvent from(Long productId) {
         return new LikeCanceledEvent(

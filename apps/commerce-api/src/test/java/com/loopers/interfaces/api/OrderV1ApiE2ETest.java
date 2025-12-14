@@ -82,7 +82,7 @@ class OrderV1ApiE2ETest {
         @Test
         void throwsException_whenInvalidIdIsProvided() {
             // arrange
-            Long invalidId = -1L;
+            Long invalidId = 1L;
             String requestUrl = ENDPOINT_GET.apply(invalidId);
 
             HttpHeaders headers = new HttpHeaders();
