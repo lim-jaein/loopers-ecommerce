@@ -59,8 +59,8 @@ public class PaymentFacade {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void handlePaymentFailure(Long orderId) {
-        Order order = orderService.findOrderWithItems(orderId)
+    public void handlePaymentFailure(Long userId, Long orderId) {
+        Order order = orderService.findOrderWithItems(userId, orderId)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 주문입니다." + orderId));
 
         // 재고 원복

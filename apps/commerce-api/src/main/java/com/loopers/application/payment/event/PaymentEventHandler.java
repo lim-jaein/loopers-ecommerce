@@ -39,9 +39,9 @@ public class PaymentEventHandler {
     @Async
     void handlePaymentFailed(PaymentFailedEvent event) {
         try {
-            paymentFacade.handlePaymentFailure(event.orderId());
+            paymentFacade.handlePaymentFailure(event.userId(), event.orderId());
         } catch (Exception e) {
-            log.error("결제 실패 이벤트 처리 중 오류 발행. orderId={}", event.orderId(), e);
+            log.error("결제 실패 이벤트 처리 중 오류 발행. userId={}, orderId={}", event.userId(), event.orderId(), e);
             throw e;
         }
     }
