@@ -5,7 +5,6 @@ import com.loopers.domain.order.OrderService;
 import com.loopers.domain.payment.Payment;
 import com.loopers.domain.payment.PaymentService;
 import com.loopers.domain.point.PointService;
-import com.loopers.domain.stock.StockService;
 import com.loopers.infrastructure.ResilientPgClient;
 import com.loopers.interfaces.api.payment.PaymentV1Dto;
 import com.loopers.support.error.CoreException;
@@ -13,7 +12,6 @@ import com.loopers.support.error.ErrorType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
@@ -25,7 +23,6 @@ public class PaymentFacade {
     private final PointService pointService;
     private final OrderService orderService;
     private final PaymentService paymentService;
-    private final StockService stockService;
 
     @Transactional
     public void pay(Long orderId) {
@@ -56,20 +53,5 @@ public class PaymentFacade {
            }
            default -> throw new CoreException(ErrorType.BAD_REQUEST, "결제 방식이 선택되지 않았습니다.");
        }
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void handlePaymentFailure(Long userId, Long orderId) {
-        Order order = orderService.findOrderWithItems(userId, orderId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 주문입니다." + orderId));
-
-        // 재고 원복
-        stockService.increaseStocks(order.getItems());
-        // 실패 상태 변경
-        orderService.markFailed(orderId);
-    }
-
-    public void handlePaymentSucceed(Long orderId) {
-        orderService.markPaid(orderId);
     }
 }
