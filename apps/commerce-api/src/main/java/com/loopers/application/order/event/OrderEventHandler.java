@@ -1,10 +1,11 @@
 package com.loopers.application.order.event;
 
+import com.loopers.application.order.OrderFacade;
 import com.loopers.application.payment.PaymentFacade;
-import com.loopers.application.payment.event.PaymentFailedEvent;
-import com.loopers.application.payment.event.PaymentSucceededEvent;
+import com.loopers.domain.common.event.DomainEventRepository;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
+import com.loopers.support.json.JsonConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,8 +21,13 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class OrderEventHandler {
 
+    private final OrderFacade orderFacade;
     private final PaymentFacade paymentFacade;
     private final ApplicationEventPublisher eventPublisher;
+
+    private final DomainEventRepository eventRepository;
+    private final JsonConverter jsonConverter;
+
 
     /**
      * 주문 생성 트랜잭션 커밋 이후 결제를 진행합니다.
@@ -33,12 +39,12 @@ public class OrderEventHandler {
     void handleOrderCreatedPayment(OrderCreatedEvent event) {
         try {
             paymentFacade.pay(event.orderId());
-            eventPublisher.publishEvent(PaymentSucceededEvent.from(event.orderId()));
+            orderFacade.handleOrderSucceed(event.orderId());
         } catch (Exception e) {
             // 사용자 요청 이상인 경우만 실패 처리
             // 이외 서버 타임아웃 등은 retry -> pending상태로 스케줄링 시도
             if (e instanceof CoreException ce && ce.getErrorType() == ErrorType.BAD_REQUEST) {
-                eventPublisher.publishEvent(PaymentFailedEvent.of(event.userId(), event.orderId(), e));
+                orderFacade.handleOrderFailure(event.userId(), event.orderId());
             }
         }
     }
