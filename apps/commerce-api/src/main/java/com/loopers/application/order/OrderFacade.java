@@ -1,7 +1,6 @@
 package com.loopers.application.order;
 
-import com.loopers.application.order.event.OrderCreatedEvent;
-import com.loopers.application.payment.event.PaymentSucceededEvent;
+import com.loopers.application.payment.PaymentProcessService;
 import com.loopers.domain.common.vo.Money;
 import com.loopers.domain.order.Order;
 import com.loopers.domain.order.OrderService;
@@ -14,7 +13,6 @@ import com.loopers.interfaces.api.order.OrderV1Dto;
 import com.loopers.support.error.CoreException;
 import com.loopers.support.error.ErrorType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +26,10 @@ public class OrderFacade {
     private final OrderService orderService;
     private final ProductService productService;
     private final StockService stockService;
-    private final PaymentService paymentService;
 
-    private final ApplicationEventPublisher eventPublisher;
+    private final PaymentService paymentService;
+    private final PaymentProcessService paymentProcessService;
+
 
     @Transactional
     public Order createOrder(Long userId, OrderV1Dto.OrderCreateRequest request) {
@@ -50,8 +49,8 @@ public class OrderFacade {
         // 4. 결제 정보 저장
         paymentService.savePayment(Payment.create(order, request.payment()));
 
-        // 5. 이벤트 발행
-        eventPublisher.publishEvent(OrderCreatedEvent.of(order.getId(), userId));
+        // 5. 결제 진행
+        paymentProcessService.process(order.getUserId(), order.getId());
 
         return order;
     }
@@ -98,7 +97,6 @@ public class OrderFacade {
 
     public void handleOrderSucceed(Long orderId) {
         orderService.markPaid(orderId);
-        eventPublisher.publishEvent(PaymentSucceededEvent.from(orderId));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
