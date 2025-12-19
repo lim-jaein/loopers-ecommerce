@@ -95,6 +95,7 @@ public class OrderFacade {
         return orderService.findAll(userId);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleOrderSucceed(Long orderId) {
         orderService.markPaid(orderId);
     }
