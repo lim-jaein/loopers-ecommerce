@@ -7,6 +7,7 @@ import com.loopers.domain.common.event.EventStatus;
 import com.loopers.messaging.event.KafkaEventMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -19,8 +20,8 @@ import java.util.List;
 
 @Slf4j
 @Component
+@ConditionalOnBean(KafkaTemplate.class)
 @RequiredArgsConstructor
-//@Profile("!test")
 public class DomainEventPublisher {
     private final DomainEventRepository domainEventRepository;
     private final KafkaTemplate<Object, Object> kafkaTemplate;
