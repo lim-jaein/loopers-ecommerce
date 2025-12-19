@@ -1,6 +1,6 @@
 package com.loopers.application.payment;
 
-import com.loopers.application.order.event.PaymentRequested;
+import com.loopers.application.order.event.OrderCreated;
 import com.loopers.application.payment.event.PaymentSucceededEvent;
 import com.loopers.domain.order.Order;
 import com.loopers.domain.order.OrderService;
@@ -46,7 +46,7 @@ public class PaymentFacade {
         switch (payment.getPaymentMethod()) {
            case CARD -> {
                // 카드 결제정보 검증
-               eventPublisher.publishEvent(PaymentRequested.of(userId, orderId));
+               eventPublisher.publishEvent(OrderCreated.of(userId, orderId));
            }
            case POINT -> {
                try {
