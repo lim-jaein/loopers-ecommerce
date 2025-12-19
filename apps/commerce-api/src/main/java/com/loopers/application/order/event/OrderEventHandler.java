@@ -61,9 +61,9 @@ public class OrderEventHandler {
      * 결제 성공 시, outbox 테이블에 이벤트를 저장합니다.
      */
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    public void handleOutboxEvent(OrderPaidEvent event) {
+    public void handleOutboxEvent(PaymentSucceededEvent event) {
 
-        DomainEventEnvelop<OrderPaidEvent> envelop =
+        DomainEventEnvelop<PaymentSucceededEvent> envelop =
                 DomainEventEnvelop.of(
                         "ORDER_PAID",
                         "ORDER",
