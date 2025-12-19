@@ -1,6 +1,6 @@
 package com.loopers.application.payment.event;
 
-import com.loopers.application.order.event.PaymentRequested;
+import com.loopers.application.order.event.OrderCreated;
 import com.loopers.application.payment.PaymentProcessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class PaymentEventHandler {
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Async
-    void handleExternalPgPayment(PaymentRequested event) {
+    void handleExternalPgPayment(OrderCreated event) {
         paymentProcessService.processPg(event.userId(), event.orderId());
     }
 }
