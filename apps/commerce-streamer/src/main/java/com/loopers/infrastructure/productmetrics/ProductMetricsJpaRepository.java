@@ -40,7 +40,7 @@ public interface ProductMetricsJpaRepository extends JpaRepository<ProductMetric
     @Modifying
     @Query(value = """
         INSERT INTO product_metrics (product_id, like_count, sales_count, sales_amount, view_count, created_at, updated_at)
-        VALUES (:productId, 0, :quantity, amount, 0, NOW(), NOW())
+        VALUES (:productId, 0, :quantity, :amount, 0, NOW(), NOW())
         ON DUPLICATE KEY UPDATE
             sales_count = sales_count + :quantity,
             sales_amount = sales_amount + :amount,
