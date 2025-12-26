@@ -5,6 +5,7 @@ import com.loopers.domain.productmetrics.ProductMetricsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -28,8 +29,8 @@ public class ProductMetricsRepositoryImpl implements ProductMetricsRepository {
     }
 
     @Override
-    public void upsertSalesCount(Long productId, int quantity) {
-        productMetricsJpaRepository.upsertSalesCount(productId, quantity);
+    public void upsertSalesCount(Long productId, int quantity, BigDecimal amount) {
+        productMetricsJpaRepository.upsertSalesCount(productId, quantity, amount);
     }
 
     @Override
