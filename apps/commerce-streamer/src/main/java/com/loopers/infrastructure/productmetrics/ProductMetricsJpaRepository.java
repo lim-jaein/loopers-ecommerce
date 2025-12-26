@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public interface ProductMetricsJpaRepository extends JpaRepository<ProductMetrics, Long> {
@@ -38,15 +39,16 @@ public interface ProductMetricsJpaRepository extends JpaRepository<ProductMetric
 
     @Modifying
     @Query(value = """
-        INSERT INTO product_metrics (product_id, like_count, sales_count, view_count, created_at, updated_at)
-        VALUES (:productId, 0, :quantity, 0, NOW(), NOW())
+        INSERT INTO product_metrics (product_id, like_count, sales_count, sales_amount, view_count, created_at, updated_at)
+        VALUES (:productId, 0, :quantity, amount, 0, NOW(), NOW())
         ON DUPLICATE KEY UPDATE
             sales_count = sales_count + :quantity,
+            sales_amount = sales_amount + :amount,
             updated_at = NOW()
         """,
         nativeQuery = true
     )
-    void upsertSalesCount(@Param("productId") Long productId, @Param("quantity") int quantity);
+    void upsertSalesCount(@Param("productId") Long productId, @Param("quantity") int quantity, @Param("amount") BigDecimal amount);
 
     @Modifying
     @Query(value = """
