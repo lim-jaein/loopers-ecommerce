@@ -12,6 +12,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -45,16 +46,17 @@ public class ProductMetricsConsumer {
     }
 
     private void handle(KafkaEventMessage<Object> message) {
+        LocalDate today = LocalDate.now();
         Long productId = message.getAggregateId();
 
         // 카운트 원자적 증가
         switch (message.getEventName()) {
             case "LIKE_CREATED" ->
-                    productMetricsService.increaseLikeCount(productId);
+                    productMetricsService.increaseLikeCount(productId, today);
             case "LIKE_CANCELED" ->
-                    productMetricsService.decreaseLikeCount(productId);
+                    productMetricsService.decreaseLikeCount(productId, today);
             case "PRODUCT_VIEWED" ->
-                    productMetricsService.increaseViewCount(productId);
+                    productMetricsService.increaseViewCount(productId, today);
         }
     }
 
