@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -14,26 +16,26 @@ public class ProductMetricsService {
     private final ProductMetricsJpaRepository productMetricsRepository;
 
     @Transactional
-    public void increaseSalesCount(Long productId, int quantity) {
+    public void increaseSalesCount(Long productId, int quantity, LocalDate metricDate) {
         if (quantity <= 0) {
-            log.warn("판매 수량이 0 이하일 수 없습니다. 수량:{}, 상품ID:{}", quantity, productId);
+            log.warn("판매 수량이 0 이하일 수 없습니다. 수량:{}, 상품ID:{}, 일자:{}", quantity, productId, metricDate);
             return;
         }
-        productMetricsRepository.upsertSalesCount(productId, quantity);
+        productMetricsRepository.upsertSalesCount(productId, quantity, metricDate);
     }
 
     @Transactional
-    public void increaseLikeCount(Long productId) {
-        productMetricsRepository.upsertLikeCount(productId);
+    public void increaseLikeCount(Long productId, LocalDate metricDate) {
+        productMetricsRepository.upsertLikeCount(productId, metricDate);
     }
 
     @Transactional
-    public void decreaseLikeCount(Long productId) {
-        productMetricsRepository.upsertUnlikeCount(productId);
+    public void decreaseLikeCount(Long productId, LocalDate metricDate) {
+        productMetricsRepository.upsertUnlikeCount(productId, metricDate);
     }
 
     @Transactional
-    public void increaseViewCount(Long productId) {
-        productMetricsRepository.upsertViewCount(productId);
+    public void increaseViewCount(Long productId, LocalDate metricDate) {
+        productMetricsRepository.upsertViewCount(productId, metricDate);
     }
 }
