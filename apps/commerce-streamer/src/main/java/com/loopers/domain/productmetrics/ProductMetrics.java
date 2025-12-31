@@ -33,6 +33,9 @@ public class ProductMetrics {
     private long salesCount;
 
     @Column(nullable = false)
+    private long salesAmount;
+
+    @Column(nullable = false)
     private long viewCount;
 
     private ZonedDateTime createdAt;
@@ -45,6 +48,7 @@ public class ProductMetrics {
         this.productId = productId;
         this.likeCount = 0;
         this.salesCount = 0;
+        this.salesAmount = 0;
         this.viewCount = 0;
         this.createdAt = ZonedDateTime.now();
         this.updatedAt = ZonedDateTime.now();

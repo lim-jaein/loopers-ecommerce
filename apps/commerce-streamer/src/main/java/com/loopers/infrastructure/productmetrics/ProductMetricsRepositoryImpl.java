@@ -5,6 +5,7 @@ import com.loopers.domain.productmetrics.ProductMetricsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -29,8 +30,8 @@ public class ProductMetricsRepositoryImpl implements ProductMetricsRepository {
     }
 
     @Override
-    public void upsertSalesCount(Long productId, int quantity, LocalDate metricDate) {
-        productMetricsJpaRepository.upsertSalesCount(productId, quantity, metricDate);
+    public void upsertSalesCount(Long productId, int quantity, BigDecimal amount, LocalDate metricDate) {
+        productMetricsJpaRepository.upsertSalesCount(productId, quantity, amount, metricDate);
     }
 
     @Override
