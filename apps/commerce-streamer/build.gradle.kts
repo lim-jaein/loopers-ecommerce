@@ -12,8 +12,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("com.mysql:mysql-connector-j")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-batch")
 
     // querydsl
     annotationProcessor("com.querydsl:querydsl-apt::jakarta")

@@ -37,11 +37,11 @@ public class CacheKeyService {
         return "ranking:monthly:snapshot:" + snapshotDate;
     }
 
-    public String rankingWeeklyLastestKey() {
-        return "ranking:weekly:lastest";
+    public String rankingWeeklyLatestKey() {
+        return "ranking:weekly:latest";
     }
 
-    public String rankingMonthlyLastestKey() {
-        return "ranking:weekly:lastest";
+    public String rankingMonthlyLatestKey() {
+        return "ranking:monthly:latest";
     }
 }

@@ -62,14 +62,14 @@ public class WeeklyRankingTasklet implements Tasklet {
             throw new RuntimeException("실행일자가 null 입니다.");
         }
 
-        fromDate = LocalDate.parse(requestDate).minusDays(29).toString();
-        toDate = requestDate;
+        fromDate = LocalDate.parse(requestDate).minusDays(7).toString();
+        toDate = LocalDate.parse(requestDate).minusDays(1).toString();;
 
         log.info("WeeklyRanking Tasklet 실행: {} ~ {}, 실행 요청 일자 : {}", fromDate, toDate, requestDate);
 
         int page = 0;
         String snapshotKey = cacheKeyService.rankingWeeklySnapshotKey(requestDate);
-        String latestKey = cacheKeyService.rankingWeeklyLastestKey();
+        String latestKey = cacheKeyService.rankingWeeklyLatestKey();
 
         // 재실행 시 Redis 키 삭제
         redisTemplate.delete(snapshotKey);

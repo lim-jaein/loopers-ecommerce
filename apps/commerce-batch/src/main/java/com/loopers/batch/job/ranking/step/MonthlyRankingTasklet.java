@@ -63,13 +63,13 @@ public class MonthlyRankingTasklet implements Tasklet {
         }
 
         fromDate = LocalDate.parse(requestDate).minusDays(29).toString();
-        toDate = requestDate;
+        toDate = LocalDate.parse(requestDate).minusDays(1).toString();;
 
         log.info("MonthlyRanking Tasklet 실행: {} ~ {}, 실행 요청 일자 : {}", fromDate, toDate, requestDate);
 
         int page = 0;
         String snapshotKey = cacheKeyService.rankingMonthlySnapshotKey(requestDate);
-        String latestKey = cacheKeyService.rankingMonthlyLastestKey();
+        String latestKey = cacheKeyService.rankingMonthlyLatestKey();
 
         // 재실행 시 Redis 키 삭제
         redisTemplate.delete(snapshotKey);
@@ -119,7 +119,7 @@ public class MonthlyRankingTasklet implements Tasklet {
     }
 
     /**
-     * Redis ZSet에서 주간 Top100 랭킹 데이터를 읽어온다.
+     * Redis ZSet에서 월간 Top100 랭킹 데이터를 읽어온다.
      * @param snapshotKey
      * @return
      */

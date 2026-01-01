@@ -16,19 +16,29 @@ public class ProductMetricsReader {
     private final EntityManagerFactory entityManagerFactory;
 
     private static final String SELECT_SQL = """
-        SELECT product_id, SUM(like_count), SUM(sales_amount), SUM(view_count)
+        SELECT product_id as productId,
+               SUM(like_count) as likeCount,
+               SUM(sales_count) as salesCount,
+               SUM(sales_amount) as salesAmount,
+               SUM(view_count) as viewCount
           FROM product_metrics
          WHERE metric_date BETWEEN :fromDate AND :toDate
          GROUP BY product_id
+         ORDER BY product_id
          LIMIT :limit OFFSET :offset
     """;
 
     private static final String SELECT_PRODUCT_ID_SQL = """
-        SELECT product_id, SUM(like_count), SUM(sales_amount), SUM(view_count)
+        SELECT product_id as productId,
+               SUM(like_count) as likeCount,
+               SUM(sales_count) as salesCount,
+               SUM(sales_amount) as salesAmount,
+               SUM(view_count) as viewCount
           FROM product_metrics
          WHERE metric_date BETWEEN :fromDate AND :toDate
            AND product_id IN (:productIds)
          GROUP BY product_id
+         ORDER BY product_id
     """;
 
     public List<ProductMetricRow> readPage(
