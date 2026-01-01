@@ -28,11 +28,11 @@ public class RankingFacade {
     private final ProductService productService;
     private final ProductLikeCountService productLikeCountService;
 
-    public Page<RankingProductResponse> getRankings(LocalDate rankingDate, Pageable pageable) {
+    public Page<RankingProductResponse> getRankings(String period, LocalDate rankingDate, Pageable pageable) {
 
-        // 1. Redis ZSET에서 랭킹 상품 ID와 점수를 조회
-        List<RankingInfo> rankedProducts = rankingService.getRankings(rankingDate, pageable);
-        long totalCount = rankingService.getTotalCount(rankingDate);
+        // 1. 기간별 랭킹 상품 추출 (일간/주간/월간)
+        List<RankingInfo> rankedProducts = rankingService.getRankings(period, rankingDate, pageable);
+        long totalCount = rankingService.getTotalCount(period, rankingDate);
 
         // 2. 랭킹 상품 ID들을 추출
         List<Long> productIds = rankedProducts.stream()
@@ -63,20 +63,17 @@ public class RankingFacade {
                             product.getBrandId(),
                             product.getPrice().getAmount(),
                             likeCount,
-                            ranking.score(),
                             ranking.rank(),
-                            LocalDateTime.now()     // createdAt?
+                            LocalDateTime.now()
                     );
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        Page<RankingProductResponse> responsePage = new PageImpl<>(
+        return new PageImpl<>(
                 rankingResponses,
                 pageable,
                 totalCount
         );
-
-        return responsePage;
-    };
+    }
 }

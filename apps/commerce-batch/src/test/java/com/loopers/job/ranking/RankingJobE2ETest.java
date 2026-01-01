@@ -1,6 +1,6 @@
-package com.loopers.job.demo;
+package com.loopers.job.ranking;
 
-import com.loopers.batch.job.demo.DemoJobConfig;
+import com.loopers.batch.job.ranking.RankingJobConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @SpringBatchTest
-@TestPropertySource(properties = "spring.batch.job.name=" + DemoJobConfig.JOB_NAME)
-class DemoJobE2ETest {
+@TestPropertySource(properties = "spring.batch.job.name=" + RankingJobConfig.JOB_NAME)
+class RankingJobE2ETest {
 
     // IDE 정적 분석 상 [SpringBatchTest] 의 주입보다 [SpringBootTest] 의 주입이 우선되어, 해당 컴포넌트는 없으므로 오류처럼 보일 수 있음.
     // [SpringBatchTest] 자체가 Scope 기반으로 주입하기 때문에 정상 동작함.
@@ -30,7 +30,7 @@ class DemoJobE2ETest {
     private JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    @Qualifier(DemoJobConfig.JOB_NAME)
+    @Qualifier(RankingJobConfig.JOB_NAME)
     private Job job;
 
     @BeforeEach
@@ -38,9 +38,9 @@ class DemoJobE2ETest {
 
     }
 
-    @DisplayName("jobParameter 중 requestDate 인자가 주어지지 않았을 때, demoJob 배치는 실패한다.")
+    @DisplayName("jobParameter 중 requestDate 인자가 주어지지 않았을 때, rankingJob 배치는 실패한다.")
     @Test
-    void shouldNotSaveCategories_whenApiError() throws Exception {
+    void shouldFail_whenRequestDateIsMissing() throws Exception {
         // arrange
         jobLauncherTestUtils.setJob(job);
 
@@ -54,7 +54,7 @@ class DemoJobE2ETest {
         );
     }
 
-    @DisplayName("demoJob 배치가 정상적으로 실행된다.")
+    @DisplayName("rankingJob 배치가 정상적으로 실행된다.")
     @Test
     void success() throws Exception {
         // arrange
@@ -62,7 +62,7 @@ class DemoJobE2ETest {
 
         // act
         var jobParameters = new JobParametersBuilder()
-            .addLocalDate("requestDate", LocalDate.now())
+            .addString("requestDate", LocalDate.now().toString())
             .toJobParameters();
         var jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 

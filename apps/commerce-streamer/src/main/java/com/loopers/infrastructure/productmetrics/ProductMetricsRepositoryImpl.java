@@ -30,8 +30,8 @@ public class ProductMetricsRepositoryImpl implements ProductMetricsRepository {
     }
 
     @Override
-    public void upsertSalesCount(Long productId, int quantity, LocalDate metricDate, BigDecimal amount) {
-        productMetricsJpaRepository.upsertSalesCount(productId, quantity, metricDate, amount);
+    public void upsertSalesCount(Long productId, int quantity, BigDecimal amount, LocalDate metricDate) {
+        productMetricsJpaRepository.upsertSalesCount(productId, quantity, amount, metricDate);
     }
 
     @Override

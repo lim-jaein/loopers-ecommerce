@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
@@ -21,11 +22,12 @@ public class RankingV1Controller implements RankingV1ApiSpec {
 
     @Override
     public ApiResponse<ProductV1Dto.PageResponse<RankingProductResponse>> getRankings(
+            @RequestParam(defaultValue = "daily") String period,
             Pageable pageable
     ) {
         LocalDate rankingDate = LocalDate.now();
 
-        Page<RankingProductResponse> page = rankingFacade.getRankings(rankingDate, pageable);
+        Page<RankingProductResponse> page = rankingFacade.getRankings(period, rankingDate, pageable);
 
         return ApiResponse.success(ProductV1Dto.PageResponse.from(page));
     }

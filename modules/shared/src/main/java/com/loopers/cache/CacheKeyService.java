@@ -28,4 +28,20 @@ public class CacheKeyService {
     public String rankingKey(LocalDate date) {
         return "ranking:all:" + date.format(DateTimeFormatter.BASIC_ISO_DATE);
     }
+
+    public String rankingWeeklySnapshotKey(String snapshotDate) {
+        return "ranking:weekly:snapshot:" + snapshotDate;
+    }
+
+    public String rankingMonthlySnapshotKey(String snapshotDate) {
+        return "ranking:monthly:snapshot:" + snapshotDate;
+    }
+
+    public String rankingWeeklyLatestKey() {
+        return "ranking:weekly:latest";
+    }
+
+    public String rankingMonthlyLatestKey() {
+        return "ranking:monthly:latest";
+    }
 }
