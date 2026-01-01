@@ -2,7 +2,7 @@ package com.loopers.ranking.policy;
 
 public interface RankingScorePolicy {
 
-    double caculateRankingScore(
+    double calculateRankingScore(
             long likeCount,
             long salesAmount,
             long viewCount

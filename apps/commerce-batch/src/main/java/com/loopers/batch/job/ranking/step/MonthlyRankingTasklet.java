@@ -84,7 +84,7 @@ public class MonthlyRankingTasklet implements Tasklet {
             // 2. Processor: PAGE_SIZE별 랭킹스코어 계산 및 Redis ZSet 적재
             for (ProductMetricRow row : rows) {
                 // 랭킹 스코어 계산
-                double score = rankingScorePolicy.caculateRankingScore(
+                double score = rankingScorePolicy.calculateRankingScore(
                         row.likeCount(),
                         row.salesAmount(),
                         row.viewCount()

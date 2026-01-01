@@ -11,7 +11,7 @@ public class DefaultRankingScorePolicy implements RankingScorePolicy {
 
 
     @Override
-    public double caculateRankingScore(long likeCount, long salesAmount, long viewCount) {
+    public double calculateRankingScore(long likeCount, long salesAmount, long viewCount) {
         return RANKING_LIKE_WEIGHT * likeCount +
                 RANKING_ORDER_WEIGHT * Math.log1p(salesAmount) +
                 RANKING_VIEW_WEIGHT * viewCount;
@@ -20,9 +20,9 @@ public class DefaultRankingScorePolicy implements RankingScorePolicy {
     @Override
     public double getEventScore(String eventName, long value) {
         return switch (eventName) {
-            case "ORDER_PAID" -> caculateRankingScore(0, value, 0);
-            case "LIKE_CREATED" -> caculateRankingScore(value, 0, 0);
-            case "PRODUCT_VIEWED" -> caculateRankingScore(0, 0, value);
+            case "ORDER_PAID" -> calculateRankingScore(0, value, 0);
+            case "LIKE_CREATED" -> calculateRankingScore(value, 0, 0);
+            case "PRODUCT_VIEWED" -> calculateRankingScore(0, 0, value);
             default -> throw new IllegalStateException("알 수 없는 이벤트명 입니다. " + eventName);
         };
     }
