@@ -13,18 +13,16 @@ public class RankingV1Dto {
             Long brandId,
             BigDecimal price,
             int likeCount,
-            long score, // 랭킹 스코어 추가
             Long rank,  // 랭킹 순위 추가
             LocalDateTime createdAt
     ) {
-        public static RankingProductResponse of(ProductInfo info, long score, Long rank) {
+        public static RankingProductResponse of(ProductInfo info, Long rank) {
             return new RankingProductResponse(
                     info.id(),
                     info.name(),
                     info.brandId(),
                     info.priceAmount(),
                     info.likeCount(),
-                    score,
                     rank,
                     info.createdAt()
             );

@@ -18,7 +18,7 @@ public class ProductMetricsService {
     private final ProductMetricsJpaRepository productMetricsRepository;
 
     @Transactional
-    public void increaseSalesCount(Long productId, int quantity, LocalDate metricDate, BigDecimal amount) {
+    public void increaseSalesCount(Long productId, int quantity, BigDecimal amount, LocalDate metricDate) {
         if (quantity <= 0) {
             log.warn("판매 수량이 0 이하일 수 없습니다. 수량:{}, 상품ID:{}, 일자:{}", quantity, productId, metricDate);
             return;

@@ -1,7 +1,10 @@
-package com.loopers.ranking.streamer;
+package com.loopers.infrastructure.ranking;
 
 import com.loopers.cache.CacheKeyService;
+import com.loopers.domain.ranking.RankingRepository;
+import com.loopers.ranking.streamer.RankingInfo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
@@ -11,39 +14,43 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-@Repository
+@Repository("dailyRankingRepository")
 @RequiredArgsConstructor
-public class RankingReadRepository {
+public class DailyRankingRepositoryImpl implements RankingRepository {
 
     private final RedisTemplate<String, String> redisTemplate;
     private final CacheKeyService cacheKeyService;
 
-    /**
-     * Top-N 조회
-     */
-    public Set<ZSetOperations.TypedTuple<String>> findTopN(
-            LocalDate date,
-            int size
-    ) {
+    @Override
+    public List<RankingInfo> findRankings(LocalDate date, Pageable pageable) {
+        return findPage(date, pageable.getPageNumber(), pageable.getPageSize());
+    }
+
+    @Override
+    public long count(LocalDate date) {
+        return findTotalCount(date);
+    }
+
+    @Override
+    public Long findRank(LocalDate date, Long productId) {
         return redisTemplate.opsForZSet()
-                .reverseRangeWithScores(
-                cacheKeyService.rankingKey(date),
-                0,
-                size - 1
-        );
+                .reverseRank(
+                        cacheKeyService.rankingKey(date),
+                        productId.toString()
+                );
     }
 
     /**
-     * 랭킹 페이지 Top-N 조회
+     * 랭킹 페이지 Top-N 조회 (내부 메서드)
      */
-    public List<RankingInfo> findPage(
+    private List<RankingInfo> findPage(
             LocalDate date,
             int page,
             int size
     ) {
-        long start = (long) (page - 1) * size;
+        long start = (long) (page) * size; // Pageable은 0부터 시작
         long end = start + size - 1;
-        long offset = (page - 1) * size;
+        long offset = (long) (page) * size;
 
         Set<ZSetOperations.TypedTuple<String>> zset = redisTemplate.opsForZSet().reverseRangeWithScores(
                 cacheKeyService.rankingKey(date),
@@ -62,29 +69,14 @@ public class RankingReadRepository {
                     ZSetOperations.TypedTuple<String> s = zlist.get(i);
                     return new RankingInfo(
                             Long.valueOf(s.getValue()),
-                            s.getScore().longValue(),
                             offset + i + 1
                     );
                 })
                 .toList();
     }
 
-    /**
-     * 특정 상품 순위 조회
-     */
-    public Long findRank(
-            LocalDate date,
-            Long productId
-    ) {
-        return redisTemplate.opsForZSet()
-                .reverseRank(
-                cacheKeyService.rankingKey(date),
-                productId.toString()
-        );
-    }
-
-    public long findTotalCount(LocalDate rankingDate) {
-        return redisTemplate.opsForZSet()
-                .zCard(rankingDate.toString());
+    private long findTotalCount(LocalDate rankingDate) {
+        Long count = redisTemplate.opsForZSet().zCard(cacheKeyService.rankingKey(rankingDate));
+        return count != null ? count : 0;
     }
 }

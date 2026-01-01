@@ -17,6 +17,7 @@ public interface RankingV1ApiSpec {
     )
     @GetMapping
     ApiResponse<ProductV1Dto.PageResponse<RankingProductResponse>> getRankings(
+            String period,
             Pageable pageable
     );
 }

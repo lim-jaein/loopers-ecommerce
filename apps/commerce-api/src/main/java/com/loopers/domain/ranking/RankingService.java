@@ -1,7 +1,6 @@
 package com.loopers.domain.ranking;
 
 import com.loopers.ranking.streamer.RankingInfo;
-import com.loopers.ranking.streamer.RankingReadRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,18 +11,30 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RankingService {
-    private final RankingReadRepository rankingReadRepository;
+    private final RankingRepository dailyRankingRepository;
+    private final RankingRepository weeklyRankingRepository;
+    private final RankingRepository monthlyRankingRepository;
 
-
-    public List<RankingInfo> getRankings(LocalDate rankingDate, Pageable pageable) {
-        return rankingReadRepository.findPage(rankingDate, pageable.getPageNumber(), pageable.getPageSize());
+    public List<RankingInfo> getRankings(String period, LocalDate rankingDate, Pageable pageable) {
+        RankingRepository repository = getRepository(period);
+        return repository.findRankings(rankingDate, pageable);
     }
 
-    public long getTotalCount(LocalDate rankingDate) {
-        return rankingReadRepository.findTotalCount(rankingDate);
+    public long getTotalCount(String period, LocalDate rankingDate) {
+        RankingRepository repository = getRepository(period);
+        return repository.count(rankingDate);
+    }
+
+    private RankingRepository getRepository(String period) {
+        if ("weekly".equalsIgnoreCase(period)) {
+            return weeklyRankingRepository;
+        } else if ("monthly".equalsIgnoreCase(period)) {
+            return monthlyRankingRepository;
+        }
+        return dailyRankingRepository;
     }
 
     public Long getRanking(LocalDate rankingDate, long productId) {
-        return rankingReadRepository.findRank(rankingDate, productId);
+        return dailyRankingRepository.findRank(rankingDate, productId);
     }
 }
