@@ -16,6 +16,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -59,11 +60,14 @@ public class OrderMetricsConsumer {
             OrderPaidPayload.class
         );
 
+        LocalDate today = LocalDate.now();
+
         for (OrderPaidPayload.OrderItem item : payload.items()) {
             metricsService.increaseSalesCount(
-                    item.productId(),
-                    item.quantity(),
-                    item.totalPrice()
+                item.productId(),
+                item.quantity(),
+                item.totalPrice(),
+                today
             );
             if (item.soldOut()) {
                 invalidateProductCaches(item.productId());

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loopers.cache.CacheKeyService;
 import com.loopers.confg.kafka.KafkaConfig;
 import com.loopers.messaging.event.KafkaEventMessage;
+import com.loopers.ranking.policy.RankingScorePolicy;
 import com.loopers.support.event.KafkaEventProcessor;
 import com.loopers.support.event.OrderPaidPayload;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +32,7 @@ public class RankingConsumer {
 
     private final ObjectMapper objectMapper;
 
-    private static final double RANKING_VIEW_WEIGHT = 0.1;
-    private static final double RANKING_LIKE_WEIGHT = 0.2;
-    private static final double RANKING_ORDER_WEIGHT = 0.7;
+    private final RankingScorePolicy rankingScorePolicy;
 
     private static final Duration RANKING_TTL = Duration.ofDays(2);
 
@@ -75,14 +74,20 @@ public class RankingConsumer {
                 );
 
                 for (OrderPaidPayload.OrderItem item : payload.items()) {
-                    updateRanking(item.productId(), RANKING_ORDER_WEIGHT * Math.log1p(item.totalPrice().doubleValue()));
+                    updateRanking(
+                            item.productId(),
+                            rankingScorePolicy.getEventScore("ORDER_PAID", item.totalPrice().longValue()));
                 }
                 break;
             case "PRODUCT":
                 if (message.getEventName().equals("LIKE_CREATED")) {
-                    updateRanking(message.getAggregateId(), RANKING_LIKE_WEIGHT);
+                    updateRanking(
+                            message.getAggregateId(),
+                            rankingScorePolicy.getEventScore("LIKE_CREATED", 1));
                 } else if (message.getEventName().equals("PRODUCT_VIEWED")) {
-                    updateRanking(message.getAggregateId(), RANKING_VIEW_WEIGHT);
+                    updateRanking(
+                            message.getAggregateId(),
+                            rankingScorePolicy.getEventScore("PRODUCT_VIEWED", 1));
                 }
                 break;
             default:
@@ -101,18 +106,6 @@ public class RankingConsumer {
         redisTemplate
                 .opsForZSet()
                 .incrementScore(key, productId.toString(), score);
-
-//        if (productMetrics.isPresent()) {
-//            ProductMetrics pm = productMetrics.get();
-//            score = RANKING_VIEW_WEIGHT * pm.getViewCount()
-//                    + RANKING_LIKE_WEIGHT * pm.getLikeCount()
-//                    + RANKING_ORDER_WEIGHT * Math.log1p(pm.getSalesAmount());
-//        }
-
-//        // Redis zset 저장
-//        redisTemplate
-//                .opsForZSet()
-//                .add(key, productId.toString(), score);
 
         // TTL 2일 설정
         redisTemplate.expire(key, RANKING_TTL);
